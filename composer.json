@@ -6,7 +6,12 @@
     "keywords": [
         "php",
         "Collection",
-        "ArrayObject"
+        "collection",
+        "ArrayObject",
+        "arrayobject",
+        "SplFixedArray",
+        "splfixedarray",
+        "fixedarray"
     ],
     "homepage": "https://github.com/dcarbone/collection-plus",
     "license": "GPLv3",
