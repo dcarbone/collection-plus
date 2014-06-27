@@ -127,7 +127,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     public function exchangeArray($dataSet)
     {
         if (!is_array($dataSet) && !is_object($dataSet))
-            throw new \InvalidArgumentException('AbstractCollectionPlus::exchangeArray - "$dataSet" parameter expected to be array or object');
+            throw new \InvalidArgumentException(__CLASS__.'::exchangeArray - "$dataSet" parameter expected to be array or object');
 
         if ($dataSet instanceof \ArrayObject)
             $dataSet = $dataSet->getArrayCopy();
