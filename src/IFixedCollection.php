@@ -1,40 +1,15 @@
 <?php namespace DCarbone\CollectionPlus;
 
 /**
- * Interface AbstractCollectionPlus
+ * Interface IFixedCollection
  * @package DCarbone\CollectionPlus
  */
-interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableIterator, \ArrayAccess, \Serializable, \DCarbone\CollectionPlus\JsonSerializable
+interface IFixedCollection extends \DCarbone\CollectionPlus\JsonSerializable, \Serializable
 {
-    /**
-     * @return string
-     */
-    public function __toString();
-
     /**
      * @return array
      */
     public function __toArray();
-
-    /**
-     * This method was inspired by Zend Framework 2.2.x PhpReferenceCompatibility class
-     *
-     * @link https://github.com/zendframework/zf2/blob/release-2.2.6/library/Zend/Stdlib/ArrayObject/PhpReferenceCompatibility.php#L179
-     *
-     * @param $dataSet
-     * @return array
-     * @throws \InvalidArgumentException
-     */
-    public function exchangeArray($dataSet);
-
-    /**
-     * Set a value on this collection
-     *
-     * @param mixed $key
-     * @param mixed $value
-     * @return bool
-     */
-    public function set($key, $value);
 
     /**
      * Append a value
@@ -61,35 +36,6 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
     public function exists(\Closure $func);
 
     /**
-     * Return index of desired key
-     *
-     * @param mixed $value
-     * @return mixed
-     */
-    public function indexOf($value);
-
-    /**
-     * Remove and return an element
-     *
-     * @param $index
-     * @return mixed|null
-     */
-    public function remove($index);
-
-    /**
-     * @param $element
-     * @return bool
-     */
-    public function removeElement($element);
-
-    /**
-     * Get an Iterator instance for this data set
-     *
-     * @return \ArrayIterator
-     */
-    public function getIterator();
-
-    /**
      * Applies array_map to this dataset, and returns a new object.
      *
      * @link http://us1.php.net/array_map
@@ -114,6 +60,14 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
      * @return static
      */
     public function filter(\Closure $func = null);
+
+    /**
+     * Return index of desired key
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public function indexOf($value);
 
     /**
      * Is this collection empty?
@@ -165,36 +119,6 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
      * @return bool
      */
     public function usort($func);
-
-    /**
-     * Sort by keys
-     *
-     * @link http://www.php.net/manual/en/function.ksort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function ksort($flags = SORT_REGULAR);
-
-    /**
-     * Reverse sort by keys
-     *
-     * @link http://www.php.net/manual/en/function.krsort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function krsort($flags = SORT_REGULAR);
-
-    /**
-     * Sort by keys with custom function
-     *
-     * http://www.php.net/manual/en/function.uksort.php
-     *
-     * @param string|array $func
-     * @return bool
-     */
-    public function uksort($func);
 
     /**
      * Sort values while retaining indices.

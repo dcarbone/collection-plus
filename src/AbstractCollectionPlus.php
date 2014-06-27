@@ -1,7 +1,5 @@
 <?php namespace DCarbone\CollectionPlus;
 
-use DCarbone\CollectionPlus\JsonSerializable;
-
 /**
  * Class AbstractCollectionPlus
  * @package DCarbone\CollectionPlus
@@ -303,7 +301,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if ($this->isEmpty())
             return null;
 
-        return reset($this->_dataSet);
+        return $this->_dataSet[$this->_positionKeys[0]];
     }
 
     /**
@@ -316,7 +314,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if ($this->isEmpty())
             return null;
 
-        return end($this->_dataSet);
+        return $this->_dataSet[$this->_positionKeys[(count($this->_positionKeys) - 1)]];
     }
 
     /**
