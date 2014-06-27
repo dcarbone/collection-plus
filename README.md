@@ -26,6 +26,14 @@ The following interfaces are implemented in this collection class:
 - <a href="http://us1.php.net/manual/en/class.serializable.php" target="_blank">\Serializable</a>
 - <a href="http://php.net/manual/en/class.jsonserializable.php" target="_blank">\JsonSerializable</a>
 
+## Inclusion in your Composer application
+
+```json
+"require" : {
+    "dcarbone/collection-plus" : "1.0.*"
+}
+```
+
 #### Example
 
 ```php
