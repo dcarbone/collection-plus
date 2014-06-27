@@ -38,7 +38,7 @@ The following interfaces are implemented in this collection class:
 
 ```php
 
-use DCarbone\Helpers\AbstractCollectionPlus;
+use DCarbone\CollectionPlus\AbstractCollectionPlus;
 
 class Parent extends AbstractCollectionPlus {}
 class Child extends AbstractCollectionPlus {}
