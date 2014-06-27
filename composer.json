@@ -1,0 +1,30 @@
+{
+    "name" : "dcarbone/collection-plus",
+    "type" : "library",
+    "description" : "A powerful Collection class inspired by the PHP community",
+
+    "keywords": [
+        "php",
+        "Collection",
+        "ArrayObject"
+    ],
+    "homepage": "https://github.com/dcarbone/collection-plus",
+    "license": "GPLv3",
+
+    "authors" : [
+        {
+            "name" : "Daniel Carbone",
+            "email" : "daniel.p.carbone@gmail.com"
+        }
+    ],
+
+    "require" : {
+        "php" : ">=5.3.3"
+    },
+
+    "autoload" : {
+        "psr-4" : {
+            "DCarbone\\CollectionPlus\\" : "src/"
+        }
+    }
+}
