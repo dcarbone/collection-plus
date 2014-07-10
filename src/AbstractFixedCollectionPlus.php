@@ -34,7 +34,14 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      */
     public function contains($element)
     {
-        return in_array($element, $this->toArray(), true);
+        $currentSize = $this->getSize();
+        for($i = 0; $i < $currentSize; $i++)
+        {
+            if ($this[$i] === $element)
+                return true;
+        }
+
+        return false;
     }
 
     /**
@@ -45,9 +52,10 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      */
     public function exists(\Closure $func)
     {
-        foreach($this as $element)
+        $currentSize = $this->getSize();
+        for ($i = 0; $i < $currentSize; $i++)
         {
-            if ($func($element))
+            if ((bool)$func($this[$i]) === true)
                 return true;
         }
 
@@ -66,7 +74,16 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      */
     public function map(\Closure $func)
     {
-        return static::fromArray(array_map($func, $this->toArray()));
+        /** @var \DCarbone\CollectionPlus\AbstractFixedCollectionPlus $new */
+        $currentSize = $this->getSize();
+        $new = new static($currentSize);
+
+        for($i = 0; $i < $currentSize; $i++)
+        {
+            $new[$i] = $func($this[$i]);
+        }
+
+        return $new;
     }
 
     /**
@@ -83,21 +100,48 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      */
     public function filter(\Closure $func = null)
     {
-        if ($func === null)
-            return static::fromArray(array_filter($this->toArray()));
+        /** @var \DCarbone\CollectionPlus\AbstractFixedCollectionPlus $new */
+        $currentSize = $this->getSize();
+        $new = new static($currentSize);
+        $newSize = 0;
 
-        return static::fromArray(array_filter($this->toArray(), $func));
+        if ($func !== null)
+        {
+            for ($i = 0; $i < $currentSize; $i++)
+            {
+                if ((bool)$func($this[$i]) !== false)
+                    $new[$newSize++] = $this[$i];
+            }
+        }
+        else
+        {
+            for ($i = 0; $i < $currentSize; $i++)
+            {
+                if ((bool)$this[$i] !== false)
+                    $new[$newSize++] = $this[$i];
+            }
+        }
+        $new->setSize($newSize);
+
+        return $new;
     }
 
     /**
      * Return index of desired key
      *
      * @param mixed $value
-     * @return mixed
+     * @return int
      */
     public function indexOf($value)
     {
-        return array_search($value, $this->toArray(), true);
+        $currentSize = $this->getSize();
+        for ($i = 0; $i < $currentSize; $i++)
+        {
+            if ($this[$i] === $value)
+                return $i;
+        }
+
+        return -1;
     }
 
     /**
@@ -107,7 +151,7 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      */
     public function isEmpty()
     {
-        return (count($this) === 0);
+        return $this->getSize() === 0;
     }
 
     /**
@@ -134,162 +178,5 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
             return null;
 
         return $this[count($this)-1];
-    }
-
-    /**
-     * Sort values by standard PHP sort method
-     *
-     * @link http://www.php.net/manual/en/function.sort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function sort($flags = SORT_REGULAR)
-    {
-        $internalArray = $this->toArray();
-        $sort = sort($internalArray, $flags);
-        foreach($internalArray as $offset=>$item)
-        {
-            $this->offsetSet($offset, $item);
-        }
-
-        return $sort;
-    }
-
-    /**
-     * Reverse sort values
-     *
-     * @link http://www.php.net/manual/en/function.rsort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function rsort($flags = SORT_REGULAR)
-    {
-        $internalArray = $this->toArray();
-        $sort = rsort($internalArray, $flags);
-        foreach($internalArray as $offset=>$item)
-        {
-            $this->offsetSet($offset, $item);
-        }
-
-        return $sort;
-    }
-
-    /**
-     * Sort values by custom function
-     *
-     * @link http://www.php.net/manual/en/function.usort.php
-     *
-     * @param string|array $func
-     * @return bool
-     */
-    public function usort($func)
-    {
-        $internalArray = $this->toArray();
-        $sort = usort($internalArray, $func);
-        foreach($internalArray as $offset=>$item)
-        {
-            $this->offsetSet($offset, $item);
-        }
-
-        return $sort;
-    }
-
-    /**
-     * Sort values while retaining indices.
-     *
-     * @link http://www.php.net/manual/en/function.asort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function asort($flags = SORT_REGULAR)
-    {
-        $internalArray = $this->toArray();
-        $sort = asort($internalArray, $flags);
-        foreach($internalArray as $offset=>$item)
-        {
-            $this->offsetSet($offset, $item);
-        }
-
-        return $sort;
-    }
-
-    /**
-     * Reverse sort values while retaining indices
-     *
-     * @link http://www.php.net/manual/en/function.arsort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function arsort($flags = SORT_REGULAR)
-    {
-        $internalArray = $this->toArray();
-        $sort = arsort($internalArray, $flags);
-        foreach($internalArray as $offset=>$item)
-        {
-            $this->offsetSet($offset, $item);
-        }
-
-        return $sort;
-    }
-
-    /**
-     * Sort values while preserving indices with custom function
-     *
-     * @link http://www.php.net/manual/en/function.uasort.php
-     *
-     * @param $func
-     * @return bool
-     */
-    public function uasort($func)
-    {
-        $internalArray = $this->toArray();
-        $sort = uasort($internalArray, $func);
-        foreach($internalArray as $offset=>$item)
-        {
-            $this->offsetSet($offset, $item);
-        }
-
-        return $sort;
-    }
-
-    /**
-     * (PHP 5 >= 5.1.0)
-     * String representation of object
-     * @link http://php.net/manual/en/serializable.serialize.php
-     * @return string the string representation of the object or null
-     */
-    public function serialize()
-    {
-        return serialize($this->toArray());
-    }
-
-    /**
-     * (PHP 5 >= 5.1.0)
-     * Constructs the object
-     * @link http://php.net/manual/en/serializable.unserialize.php
-     * @param string $serialized The string representation of the object.
-     *
-     * @return void
-     */
-    public function unserialize($serialized)
-    {
-        $data = unserialize($serialized);
-        $this->setSize(count($data));
-        foreach($data as $i=>$d)
-        {
-            $this->offsetSet($i, $d);
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
     }
 }

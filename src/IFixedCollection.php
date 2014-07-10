@@ -4,7 +4,7 @@
  * Interface IFixedCollection
  * @package DCarbone\CollectionPlus
  */
-interface IFixedCollection extends \DCarbone\CollectionPlus\JsonSerializable, \Serializable
+interface IFixedCollection
 {
     /**
      * @return array
@@ -89,64 +89,4 @@ interface IFixedCollection extends \DCarbone\CollectionPlus\JsonSerializable, \S
      * @return mixed
      */
     public function last();
-
-    /**
-     * Sort values by standard PHP sort method
-     *
-     * @link http://www.php.net/manual/en/function.sort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function sort($flags = SORT_REGULAR);
-
-    /**
-     * Reverse sort values
-     *
-     * @link http://www.php.net/manual/en/function.rsort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function rsort($flags = SORT_REGULAR);
-
-    /**
-     * Sort values by custom function
-     *
-     * @link http://www.php.net/manual/en/function.usort.php
-     *
-     * @param string|array $func
-     * @return bool
-     */
-    public function usort($func);
-
-    /**
-     * Sort values while retaining indices.
-     *
-     * @link http://www.php.net/manual/en/function.asort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function asort($flags = SORT_REGULAR);
-
-    /**
-     * Reverse sort values while retaining indices
-     *
-     * @link http://www.php.net/manual/en/function.arsort.php
-     *
-     * @param int $flags
-     * @return bool
-     */
-    public function arsort($flags = SORT_REGULAR);
-
-    /**
-     * Sort values while preserving indices with custom function
-     *
-     * @link http://www.php.net/manual/en/function.uasort.php
-     *
-     * @param $func
-     * @return bool
-     */
-    public function uasort($func);
 }
