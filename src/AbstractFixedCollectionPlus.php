@@ -56,10 +56,13 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
         if (!is_callable($func, false, $callable_name))
             throw new \InvalidArgumentException(__CLASS__.'::exists - Un-callable "$func" value seen!');
 
+        if (strpos($callable_name, 'Closure::') !== 0)
+            $func = $callable_name;
+
         $currentSize = $this->getSize();
         for ($i = 0; $i < $currentSize; $i++)
         {
-            if ((bool)$callable_name($this[$i]) === true)
+            if ((bool)$func($this[$i]) === true)
                 return true;
         }
 
@@ -82,13 +85,16 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
         if (!is_callable($func, false, $callable_name))
             throw new \InvalidArgumentException(__CLASS__.'::map - Un-callable "$func" value seen!');
 
+        if (strpos($callable_name, 'Closure::') !== 0)
+            $func = $callable_name;
+
         /** @var \DCarbone\CollectionPlus\AbstractFixedCollectionPlus $new */
         $currentSize = $this->getSize();
         $new = new static($currentSize);
 
         for($i = 0; $i < $currentSize; $i++)
         {
-            $new[$i] = $callable_name($this[$i]);
+            $new[$i] = $func($this[$i]);
         }
 
         return $new;
@@ -119,9 +125,12 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
 
         if ($func !== null && isset($callable_name))
         {
+            if (strpos($callable_name, 'Closure::') !== 0)
+                $func = $callable_name;
+
             for ($i = 0; $i < $currentSize; $i++)
             {
-                if ((bool)$callable_name($this[$i]) !== false)
+                if ((bool)$func($this[$i]) !== false)
                     $new[$newSize++] = $this[$i];
             }
         }

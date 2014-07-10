@@ -184,10 +184,13 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if (!is_callable($func, false, $callable_name))
             throw new \InvalidArgumentException(__CLASS__.'::exists - Un-callable "$func" value seen!');
 
+        if (strpos($callable_name, 'Closure::') !== 0)
+            $func = $callable_name;
+
         reset($this->_storage);
         while(($key = key($this->_storage)) !== null && ($value = current($this->_storage)) !== false)
         {
-            if ($callable_name($key, $value))
+            if ($func($key, $value))
                 return true;
 
             next($this->_storage);
@@ -313,7 +316,10 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if (!is_callable($func, false, $callable_name))
             throw new \InvalidArgumentException(__CLASS__.'::map - Un-callable "$func" value seen!');
 
-        return new static(array_map($callable_name, $this->_storage));
+        if (strpos($callable_name, 'Closure::') !== 0)
+            $func = $callable_name;
+
+        return new static(array_map($func, $this->_storage));
     }
 
     /**
@@ -337,7 +343,10 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if ($func === null)
             return new static(array_filter($this->_storage));
 
-        return new static(array_filter($this->_storage, $callable_name));
+        if (strpos($callable_name, 'Closure::') !== 0)
+            $func = $callable_name;
+
+        return new static(array_filter($this->_storage, $func));
     }
 
     /**
