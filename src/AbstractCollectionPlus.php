@@ -351,7 +351,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     }
 
     /**
-     * Return the first item in the dataset
+     * Return the first item from storage
      *
      * @return mixed
      */
@@ -364,7 +364,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     }
 
     /**
-     * Return the last element in the dataset
+     * Return the last element from storage
      *
      * @return mixed
      */
