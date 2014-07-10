@@ -6,38 +6,27 @@
  */
 abstract class AbstractCollectionPlus implements ICollectionPlus
 {
-    /**
-     * Used by Iterators
-     * @var mixed
-     */
-    private $_position = null;
-    private $_positionKeys = array();
-    private $_positionKeysPosition = 0;
+    /** @var array */
+    private $_storage = array();
 
-    /**
-     * @var array
-     */
-    private $_dataSet = array();
+    /** @var mixed */
+    private $_firstKey = null;
+    /** @var mixed */
+    private $_lastKey = null;
+
+    /** @var string */
+    protected $iteratorClass = '\ArrayIterator';
 
     /**
      * @param array $data
      */
     public function __construct(array $data = array())
     {
-        $this->_dataSet = $data;
-        $this->updateKeys();
-    }
-
-    /**
-     * Updates the internal positionKeys value
-     *
-     * @return void
-     */
-    private function updateKeys()
-    {
-        $this->_positionKeys = array_keys($this->_dataSet);
-        $this->_position = reset($this->_positionKeys);
-        $this->_positionKeysPosition = 0;
+        $this->_storage = $data;
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
     }
 
     /**
@@ -69,7 +58,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if (!is_callable($func) || substr($func, 0, 6) !== 'array_')
             throw new \BadMethodCallException(__CLASS__.'->'.$func);
 
-        return call_user_func_array($func, array_merge(array($this->_dataSet), $argv));
+        return call_user_func_array($func, array_merge(array($this->_storage), $argv));
     }
 
     /**
@@ -77,7 +66,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function array_keys()
     {
-        return $this->_positionKeys;
+        return array_keys($this->_storage);
     }
 
     /**
@@ -97,7 +86,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function __toArray()
     {
-        return $this->_dataSet;
+        return $this->_storage;
     }
 
     /**
@@ -105,12 +94,12 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      * @return mixed
      * @throws \OutOfRangeException
      */
-    public function __get($param)
+    public function &__get($param)
     {
         if (!$this->offsetExists($param))
             throw new \OutOfRangeException('No data element with the key "'.$param.'" found');
 
-        return $this->_dataSet[$param];
+        return $this->_storage[$param];
    }
 
     /**
@@ -127,16 +116,22 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if (!is_array($dataSet) && !is_object($dataSet))
             throw new \InvalidArgumentException(__CLASS__.'::exchangeArray - "$dataSet" parameter expected to be array or object');
 
-        if ($dataSet instanceof \ArrayObject)
-            $dataSet = $dataSet->getArrayCopy();
-        else if ($dataSet instanceof static)
-            $dataSet = $dataSet->__toArray();
-        else if (!is_array($dataSet))
+        if ($dataSet instanceof \stdClass)
             $dataSet = (array)$dataSet;
+        else if ($dataSet instanceof self)
+            $dataSet = $dataSet->__toArray();
+        else if (is_object($dataSet) && is_callable(array($dataSet, 'getArrayCopy')))
+            $dataSet = $dataSet->getArrayCopy();
 
-        $storage = $this->_dataSet;
-        $this->_dataSet = $dataSet;
-        $this->updateKeys();
+        if (!is_array($dataSet))
+            throw new \InvalidArgumentException(__CLASS__.'::exchangeArray - Could not convert "$dataSet" value of type "'.gettype($dataSet).'" to an array!');
+
+        $storage = $this->_storage;
+        $this->_storage = $dataSet;
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $storage;
     }
 
@@ -174,21 +169,28 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function contains($element)
     {
-        return in_array($element, $this->_dataSet, true);
+        return in_array($element, $this->_storage, true);
     }
 
     /**
      * Custom "contains" method
      *
      * @param callable $func
+     * @throws \InvalidArgumentException
      * @return bool
      */
-    public function exists(\Closure $func)
+    public function exists($func)
     {
-        foreach($this->_dataSet as $key=>$element)
+        if (!is_callable($func, false, $callable_name))
+            throw new \InvalidArgumentException(__CLASS__.'::exists - Un-callable "$func" value seen!');
+
+        reset($this->_storage);
+        while(($key = key($this->_storage)) !== null && ($value = current($this->_storage)) !== false)
         {
-            if ($func($key, $element))
+            if ($callable_name($key, $value))
                 return true;
+
+            next($this->_storage);
         }
 
         return false;
@@ -202,7 +204,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function indexOf($value)
     {
-        return array_search($value, $this->_dataSet, true);
+        return array_search($value, $this->_storage, true);
     }
 
     /**
@@ -213,11 +215,17 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function remove($index)
     {
-        if (!$this->offsetExists($index))
+        if (!isset($this->_storage[$index]) && !array_key_exists($index, $this->_storage))
             return null;
 
-        $removed = $this->offsetGet($index);
-        $this->offsetUnset($index);
+        $removed = $this->_storage[$index];
+        unset($this->_storage[$index]);
+
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
+
         return $removed;
     }
 
@@ -227,12 +235,18 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function removeElement($element)
     {
-        $key = array_search($element, $this->_dataSet, true);
+        $key = array_search($element, $this->_storage, true);
 
         if ($key === false)
             return false;
 
-        $this->offsetUnset($key);
+        unset($this->_storage[$key]);
+
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
+
         return true;
     }
 
@@ -243,7 +257,44 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->_dataSet);
+        $class = $this->iteratorClass;
+        return new $class($this->_storage);
+    }
+
+    /**
+     * @return string
+     */
+    public function getIteratorClass()
+    {
+        return $this->iteratorClass;
+    }
+
+    /**
+     * Sets the iterator classname for the ArrayObject
+     *
+     * @param  string $class
+     * @throws \InvalidArgumentException
+     * @return void
+     */
+    public function setIteratorClass($class)
+    {
+        if (class_exists($class))
+        {
+            $this->iteratorClass = $class;
+            return;
+        }
+
+        if (strpos($class, '\\') === 0)
+        {
+            $class = '\\' . $class;
+            if (class_exists($class))
+            {
+                $this->iteratorClass = $class;
+                return;
+            }
+        }
+
+        throw new \InvalidArgumentException(__CLASS__.'::setIteratorClass - The iterator class does not exist');
     }
 
     /**
@@ -254,11 +305,15 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      * They scope "static" is used so that an instance of the extended class is returned.
      *
      * @param callable $func
+     * @throws \InvalidArgumentException
      * @return static
      */
-    public function map(\Closure $func)
+    public function map($func)
     {
-        return new static(array_map($func, $this->_dataSet));
+        if (!is_callable($func, false, $callable_name))
+            throw new \InvalidArgumentException(__CLASS__.'::map - Un-callable "$func" value seen!');
+
+        return new static(array_map($callable_name, $this->_storage));
     }
 
     /**
@@ -271,14 +326,18 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      * @link http://www.doctrine-project.org/api/common/2.3/source-class-Doctrine.Common.Collections.ArrayCollection.html#377-387
      *
      * @param callable $func
+     * @throws \InvalidArgumentException
      * @return static
      */
-    public function filter(\Closure $func = null)
+    public function filter($func = null)
     {
-        if ($func === null)
-            return new static(array_filter($this->_dataSet));
+        if ($func !== null && !is_callable($func, false, $callable_name))
+            throw new \InvalidArgumentException(__CLASS__.'::filter - Un-callable "$func" value seen!');
 
-        return new static(array_filter($this->_dataSet, $func));
+        if ($func === null)
+            return new static(array_filter($this->_storage));
+
+        return new static(array_filter($this->_storage, $callable_name));
     }
 
     /**
@@ -288,7 +347,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function isEmpty()
     {
-        return ($this->count() === 0);
+        return (count($this) === 0);
     }
 
     /**
@@ -301,7 +360,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if ($this->isEmpty())
             return null;
 
-        return $this->_dataSet[$this->_positionKeys[0]];
+        return $this->_storage[$this->_firstKey];
     }
 
     /**
@@ -314,7 +373,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if ($this->isEmpty())
             return null;
 
-        return $this->_dataSet[$this->_positionKeys[(count($this->_positionKeys) - 1)]];
+        return $this->_storage[$this->_lastKey];
     }
 
     /**
@@ -327,8 +386,11 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function sort($flags = SORT_REGULAR)
     {
-        $sort = sort($this->_dataSet, $flags);
-        $this->updateKeys();
+        $sort = sort($this->_storage, $flags);
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $sort;
     }
 
@@ -342,8 +404,11 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function rsort($flags = SORT_REGULAR)
     {
-        $sort = rsort($this->_dataSet, $flags);
-        $this->updateKeys();
+        $sort = rsort($this->_storage, $flags);
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $sort;
     }
 
@@ -357,8 +422,11 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function usort($func)
     {
-        $sort = usort($this->_dataSet, $func);
-        $this->updateKeys();
+        $sort = usort($this->_storage, $func);
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $sort;
     }
 
@@ -372,8 +440,11 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function ksort($flags = SORT_REGULAR)
     {
-        $sort = ksort($this->_dataSet, $flags);
-        $this->updateKeys();
+        $sort = ksort($this->_storage, $flags);
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $sort;
     }
 
@@ -387,8 +458,11 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function krsort($flags = SORT_REGULAR)
     {
-        $sort = krsort($this->_dataSet, $flags);
-        $this->updateKeys();
+        $sort = krsort($this->_storage, $flags);
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $sort;
     }
 
@@ -402,8 +476,11 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function uksort($func)
     {
-        $sort = uksort($this->_dataSet, $func);
-        $this->updateKeys();
+        $sort = uksort($this->_storage, $func);
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $sort;
     }
 
@@ -417,8 +494,11 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function asort($flags = SORT_REGULAR)
     {
-        $sort = asort($this->_dataSet, $flags);
-        $this->updateKeys();
+        $sort = asort($this->_storage, $flags);
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $sort;
     }
 
@@ -432,8 +512,11 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function arsort($flags = SORT_REGULAR)
     {
-        $sort = arsort($this->_dataSet, $flags);
-        $this->updateKeys();
+        $sort = arsort($this->_storage, $flags);
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $sort;
     }
 
@@ -447,8 +530,11 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function uasort($func)
     {
-        $sort = uasort($this->_dataSet, $func);
-        $this->updateKeys();
+        $sort = uasort($this->_storage, $func);
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
         return $sort;
     }
 
@@ -460,7 +546,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function current()
     {
-        return (!isset($this->_position) || $this->_position === null ? false : $this->_dataSet[$this->_position]);
+        return current($this->_storage);
     }
 
     /**
@@ -471,11 +557,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function next()
     {
-        $this->_positionKeysPosition++;
-        if (array_key_exists($this->_positionKeysPosition, $this->_positionKeys))
-            $this->_position = $this->_positionKeys[$this->_positionKeysPosition];
-        else
-            $this->_position = null;
+        next($this->_storage);
     }
 
     /**
@@ -486,7 +568,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function key()
     {
-        return $this->_position;
+        return key($this->_storage);
     }
 
     /**
@@ -498,7 +580,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function valid()
     {
-        return array_key_exists($this->_position, $this->_dataSet);
+        return (key($this->_storage) !== null && current($this->_storage) !== false);
     }
 
     /**
@@ -509,11 +591,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function rewind()
     {
-        $this->_positionKeysPosition = 0;
-        if (array_key_exists($this->_positionKeysPosition, $this->_positionKeys))
-            $this->_position = $this->_positionKeys[$this->_positionKeysPosition];
-        else
-            $this->_position = null;
+        reset($this->_storage);
     }
 
     /**
@@ -524,7 +602,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function hasChildren()
     {
-        return ($this->valid() && is_array($this->_dataSet[$this->_position]));
+        return ($this->valid() && is_array(current($this->_storage)));
     }
 
     /**
@@ -535,7 +613,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function getChildren()
     {
-        return $this->_dataSet[$this->_position];
+        return current($this->_storage);
     }
 
     /**
@@ -549,11 +627,13 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function seek($position)
     {
-        if (!array_key_exists($position, $this->_positionKeys))
+        if (!isset($this->_storage[$position]) && !array_key_exists($position, $this->_storage))
             throw new \OutOfBoundsException('Invalid seek position ('.$position.')');
 
-        $this->_positionKeysPosition = $position;
-        $this->_position = $this->_positionKeys[$this->_positionKeysPosition];
+        while (key($this->_storage) !== $position)
+        {
+            next($this->_storage);
+        }
     }
 
     /**
@@ -568,7 +648,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function offsetExists($offset)
     {
-        return (array_search($offset, $this->_positionKeys, true) !== false);
+        return isset($this->_storage[$offset]) || array_key_exists($offset, $this->_storage);
     }
 
     /**
@@ -581,8 +661,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function offsetGet($offset)
     {
-        if ($this->offsetExists($offset))
-            return $this->_dataSet[$offset];
+        if (isset($this->_storage[$offset]) || array_key_exists($offset, $this->_storage))
+            return $this->_storage[$offset];
         else
             return null;
     }
@@ -600,11 +680,14 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     public function offsetSet($offset, $value)
     {
         if ($offset === null)
-            $this->_dataSet[] = $value;
+            $this->_storage[] = $value;
         else
-            $this->_dataSet[$offset] = $value;
+            $this->_storage[$offset] = $value;
 
-        $this->updateKeys();
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
     }
 
     /**
@@ -618,12 +701,15 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function offsetUnset($offset)
     {
-        if ($this->offsetExists($offset))
-            unset($this->_dataSet[$offset]);
+        if (isset($this->_storage[$offset]) || array_key_exists($offset, $this->_storage))
+            unset($this->_storage[$offset]);
         else
             throw new \OutOfBoundsException('Tried to unset undefined offset ('.$offset.')');
 
-        $this->updateKeys();
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
     }
 
     /**
@@ -636,7 +722,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function count()
     {
-        return count($this->_dataSet);
+        return count($this->_storage);
     }
 
     /**
@@ -647,7 +733,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function serialize()
     {
-        return serialize($this->_dataSet);
+        return serialize($this->_storage);
     }
 
     /**
@@ -660,9 +746,12 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function unserialize($serialized)
     {
-        $this->_dataSet = unserialize($serialized);
-        $this->_positionKeys = array_keys($this->_dataSet);
-        $this->_position = reset($this->_positionKeys);
+        $this->_storage = unserialize($serialized);
+
+        end($this->_storage);
+        $this->_lastKey = key($this->_storage);
+        reset($this->_storage);
+        $this->_firstKey = key($this->_storage);
     }
 
     /**
@@ -670,6 +759,6 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function jsonSerialize()
     {
-        return $this->_dataSet;
+        return $this->_storage;
     }
 }

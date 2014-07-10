@@ -1,7 +1,7 @@
 <?php namespace DCarbone\CollectionPlus;
 
 /**
- * Interface AbstractCollectionPlus
+ * Interface ICollectionPlus
  * @package DCarbone\CollectionPlus
  */
 interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableIterator, \ArrayAccess, \Serializable, \DCarbone\CollectionPlus\JsonSerializable
@@ -58,7 +58,7 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
      * @param callable $func
      * @return bool
      */
-    public function exists(\Closure $func);
+    public function exists($func);
 
     /**
      * Return index of desired key
@@ -83,11 +83,15 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
     public function removeElement($element);
 
     /**
-     * Get an Iterator instance for this data set
-     *
-     * @return \ArrayIterator
+     * @return string
      */
-    public function getIterator();
+    public function getIteratorClass();
+
+    /**
+     * @param string $class
+     * @return void
+     */
+    public function setIteratorClass($class);
 
     /**
      * Applies array_map to this dataset, and returns a new object.
@@ -99,7 +103,7 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
      * @param callable $func
      * @return static
      */
-    public function map(\Closure $func);
+    public function map($func);
 
     /**
      * Applies array_filter to internal dataset, returns new instance with resulting values.
@@ -113,7 +117,7 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
      * @param callable $func
      * @return static
      */
-    public function filter(\Closure $func = null);
+    public function filter($func = null);
 
     /**
      * Is this collection empty?

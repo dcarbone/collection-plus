@@ -48,14 +48,18 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      * Custom "contains" method
      *
      * @param callable $func
+     * @throws \InvalidArgumentException
      * @return bool
      */
-    public function exists(\Closure $func)
+    public function exists($func)
     {
+        if (!is_callable($func, false, $callable_name))
+            throw new \InvalidArgumentException(__CLASS__.'::exists - Un-callable "$func" value seen!');
+
         $currentSize = $this->getSize();
         for ($i = 0; $i < $currentSize; $i++)
         {
-            if ((bool)$func($this[$i]) === true)
+            if ((bool)$callable_name($this[$i]) === true)
                 return true;
         }
 
@@ -70,17 +74,21 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      * They scope "static" is used so that an instance of the extended class is returned.
      *
      * @param callable $func
+     * @throws \InvalidArgumentException
      * @return static
      */
-    public function map(\Closure $func)
+    public function map($func)
     {
+        if (!is_callable($func, false, $callable_name))
+            throw new \InvalidArgumentException(__CLASS__.'::map - Un-callable "$func" value seen!');
+
         /** @var \DCarbone\CollectionPlus\AbstractFixedCollectionPlus $new */
         $currentSize = $this->getSize();
         $new = new static($currentSize);
 
         for($i = 0; $i < $currentSize; $i++)
         {
-            $new[$i] = $func($this[$i]);
+            $new[$i] = $callable_name($this[$i]);
         }
 
         return $new;
@@ -96,20 +104,24 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      * @link http://www.doctrine-project.org/api/common/2.3/source-class-Doctrine.Common.Collections.ArrayCollection.html#377-387
      *
      * @param callable $func
+     * @throws \InvalidArgumentException
      * @return static
      */
-    public function filter(\Closure $func = null)
+    public function filter($func = null)
     {
+        if ($func !== null && !is_callable($func, false, $callable_name))
+            throw new \InvalidArgumentException(__CLASS__.'::filter - Un-callable "$func" value seen!');
+
         /** @var \DCarbone\CollectionPlus\AbstractFixedCollectionPlus $new */
         $currentSize = $this->getSize();
         $new = new static($currentSize);
         $newSize = 0;
 
-        if ($func !== null)
+        if ($func !== null && isset($callable_name))
         {
             for ($i = 0; $i < $currentSize; $i++)
             {
-                if ((bool)$func($this[$i]) !== false)
+                if ((bool)$callable_name($this[$i]) !== false)
                     $new[$newSize++] = $this[$i];
             }
         }

@@ -33,7 +33,7 @@ interface IFixedCollection
      * @param callable $func
      * @return bool
      */
-    public function exists(\Closure $func);
+    public function exists($func);
 
     /**
      * Applies array_map to this dataset, and returns a new object.
@@ -45,7 +45,7 @@ interface IFixedCollection
      * @param callable $func
      * @return static
      */
-    public function map(\Closure $func);
+    public function map($func);
 
     /**
      * Applies array_filter to internal dataset, returns new instance with resulting values.
@@ -59,7 +59,7 @@ interface IFixedCollection
      * @param callable $func
      * @return static
      */
-    public function filter(\Closure $func = null);
+    public function filter($func = null);
 
     /**
      * Return index of desired key
