@@ -30,7 +30,7 @@ The following interfaces are implemented in this collection class:
 
 ```json
 "require" : {
-    "dcarbone/collection-plus" : "1.1.*"
+    "dcarbone/collection-plus" : "2.0.*"
 }
 ```
 
