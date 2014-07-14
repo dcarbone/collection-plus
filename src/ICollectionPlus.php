@@ -141,6 +141,16 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
     public function last();
 
     /**
+     * @return mixed|null
+     */
+    public function getFirstKey();
+
+    /**
+     * @return mixed|null
+     */
+    public function getLastKey();
+
+    /**
      * Sort values by standard PHP sort method
      *
      * @link http://www.php.net/manual/en/function.sort.php

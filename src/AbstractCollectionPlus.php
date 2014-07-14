@@ -386,6 +386,22 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     }
 
     /**
+     * @return mixed|null
+     */
+    public function getFirstKey()
+    {
+        return $this->_firstKey;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getLastKey()
+    {
+        return $this->_lastKey;
+    }
+
+    /**
      * Sort values by standard PHP sort method
      *
      * @link http://www.php.net/manual/en/function.sort.php
