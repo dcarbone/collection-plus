@@ -90,7 +90,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     }
 
     /**
-     * @param $param
+     * @param mixed $param
      * @return mixed
      * @throws \OutOfRangeException
      */
@@ -100,7 +100,17 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
             throw new \OutOfRangeException('No data element with the key "'.$param.'" found');
 
         return $this->_storage[$param];
-   }
+    }
+
+    /**
+     * @param mixed $name
+     * @param mixed $value
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $this->offsetSet($name, $value);
+    }
 
     /**
      * This method was inspired by Zend Framework 2.2.x PhpReferenceCompatibility class
