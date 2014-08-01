@@ -138,6 +138,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
 
         $storage = $this->_storage;
         $this->_storage = $dataSet;
+
         end($this->_storage);
         $this->_lastKey = key($this->_storage);
         reset($this->_storage);
