@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('UTC');
+
 require_once realpath(__DIR__.'/collection-plus-test-scripts/functions.php');
 
 /**
@@ -20,7 +22,7 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus::AbstractCollectionPlus::count
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
      * @param \DCarbone\CollectionPlus\BaseCollectionPlus $collection
@@ -45,7 +47,7 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
         $serialized = serialize($collection);
         $this->assertTrue(
             is_string($serialized),
-            'Saw non-string value "'.gettype($serialized).'" from "AbstractTraversableClass::serialize"');
+            'Saw non-string value "'.gettype($serialized).'" from "AbstractCollectionPlus::serialize"');
 
         $unserialized = unserialize($serialized);
         $this->assertInstanceOf(
@@ -275,7 +277,7 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::indexOf
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractTraversableClass
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
      */
     public function testHelperMethodImplementationsCorrect()
     {
@@ -358,7 +360,7 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exists
-     * @uses \DCarboneCollectionPlus\AbstractCollectionPlus
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
      * @param \DCarbone\CollectionPlus\BaseCollectionPlus $collection
      */
