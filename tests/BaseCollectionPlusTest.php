@@ -22,6 +22,18 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @return \DCarbone\CollectionPlus\BaseCollectionPlus
+     */
+    public function testCollectionCanBeConstructedWithNoConstructorArguments()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $this->assertInstanceOf('DCarbone\\CollectionPlus\\AbstractCollectionPlus', $collection);
+        return $collection;
+    }
+
+    /**
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
@@ -76,6 +88,11 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('ArrayAccess', $collection);
 
+        // First, falsy tests
+        $this->assertFalse(isset($collection['sandwich']));
+        $this->assertNull($collection['sandwich']);
+
+        // Next, truthy tests
         $this->assertTrue(isset($collection['key1']));
         $this->assertArrayHasKey('key1', $collection);
         $this->assertEquals('value1', $collection['key1']);
@@ -100,11 +117,28 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetUnset
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @expectedException \OutOfBoundsException
+     */
+    public function testExceptionThrownWhenInvalidOffsetUnset()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'key1' => 'value1',
+            'key2' => 'value2',
+            0 => 'value3'
+        ));
+
+        unset($collection['sandwiches']);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__get
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__set
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
      */
-    public function testGetSetImplementationCorrect()
+    public function testMagicMethodsGetAndSetImplementationCorrect()
     {
         $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
             'key1' => 'value1',
@@ -150,17 +184,21 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::array_keys
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::keys
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
      * @param \DCarbone\CollectionPlus\AbstractCollectionPlus $collection
      */
-    public function testCanGetArrayKeysOfCollection(\DCarbone\CollectionPlus\AbstractCollectionPlus $collection)
+    public function testCanGetKeysOfCollection(\DCarbone\CollectionPlus\AbstractCollectionPlus $collection)
     {
-        $keys = $collection->array_keys();
-        $this->assertTrue(is_array($keys), '"$collection->array_keys()" did not return an array!');
+        $keys = $collection->keys();
+        $this->assertTrue(is_array($keys), '"$collection->keys()" did not return an array!');
         $this->assertEquals(1, count($keys));
-        $this->assertContains('test', $keys, 'Did not see key "test" in "$collection->array_keys()" result');
+
+        $this->assertContains(
+            'test',
+            $keys,
+            'Did not see key "test" in "$collection->keys()" result');
     }
 
     /**
@@ -220,6 +258,7 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exchangeArray
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__toArray
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
      */
     public function testCanUseExchangeArrayWithSelfParameter()
@@ -245,6 +284,7 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exchangeArray
+     * @covers \ArrayObject::getArrayCopy
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
      * @uses \ArrayObject
      */
@@ -270,61 +310,230 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exchangeArray
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @expectedException \InvalidArgumentException
+     */
+    public function testExceptionIsRaisedForInvalidExchangeArrayParameter()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array('test' => 'value'));
+
+        $this->assertTrue(
+            method_exists($collection, 'exchangeArray'),
+            '"$collection" object did not contain public method "exchangeArray"');
+
+        $newData = 42;
+
+        $collection->exchangeArray($newData);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::set
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::append
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::contains
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::indexOf
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
      */
-    public function testHelperMethodImplementationsCorrect()
+    public function testSetMethodImplementation()
     {
         $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
 
         $this->assertTrue(
             method_exists($collection, 'set'),
             '"$collection" object did not contain public method "set"');
+
+        $collection->set('key1', 'value1');
+        $this->assertArrayHasKey('key1', $collection);
+        $this->assertEquals('value1', $collection['key1']);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::append
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testAppendMethodImplementation()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+
         $this->assertTrue(
             method_exists($collection, 'append'),
             '"$collection" object did not contain public method "append"');
+
+        $collection->append('value1');
+        $this->assertArrayHasKey(0, $collection);
+        $this->assertEquals('value1', $collection[0]);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::contains
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @depends testSetMethodImplementation
+     */
+    public function testContainsMethodImplementation()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+
         $this->assertTrue(
             method_exists($collection, 'contains'),
             '"$collection" object did not contain public method "contains"');
+
+        $collection->set('key1', 'value1');
+        $contains = $collection->contains('value1');
+
+        $this->assertTrue($contains);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::indexOf
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @depends testSetMethodImplementation
+     */
+    public function testIndexOfMethodImplementation()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+
+        $this->assertTrue(
+            method_exists($collection, 'indexOf'),
+            '"$collection" object did not contain public method "indexOf"');
+
+        $collection->set('key1', 'value1');
+        $idxValue = $collection->indexOf('value1');
+        $idxFalse = $collection->indexOf('value2');
+
+        $this->assertNotFalse($idxValue);
+        $this->assertArrayHasKey($idxValue, $collection);
+        $this->assertFalse($idxFalse);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::remove
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @depends testSetMethodImplementation
+     */
+    public function testCanRemoveElementFromCollectionByIndex()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+
+        $collection->set('key1', 'value1');
+
+        $this->assertEquals(1, count($collection));
+
+        $removed = $collection->remove('key1');
+        $this->assertEquals('value1', $removed);
+
+        $this->assertEquals(0, count($collection));
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::removeElement
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @depends testSetMethodImplementation
+     */
+    public function testCanRemoveElementFromCollectionByElement()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+
+        $value = array('value1');
+        $collection->set('key1', $value);
+
+        $this->assertEquals(1, count($collection));
+
+        $removed = $collection->removeElement($value);
+        $this->assertTrue((array('value1') == $removed));
+        $this->assertEquals(0, count($collection));
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::set
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::append
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::removeElement
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testCollectionFirstAndLastMethods()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+
         $this->assertTrue(
             method_exists($collection,'first'),
             '"$collection" object did not contain public method "first"');
         $this->assertTrue(
             method_exists($collection, 'last'),
             '"$collection" object did not contain public method "last"');
-        $this->assertTrue(
-            method_exists($collection, 'indexOf'),
-            '"$collection" object did not contain public method "indexOf"');
 
         $collection->set('key1', 'value1');
-        $this->assertArrayHasKey('key1', $collection);
+        $firstValue = $collection->first();
+        $lastValue = $collection->last();
+        $this->assertEquals('value1', $firstValue);
+        $this->assertEquals('value1', $lastValue);
 
-        $collection->append('value2');
-        $idx = $collection->indexOf('value2');
-        $this->assertEquals(
-            2,
-            count($collection),
-            '"count($collection)" did not yield the expected result of 2');
-        $this->assertNotFalse(
-            $idx,
-            'Unable to use "AbstractCollectionPlus::indexOf" to find index of "value2"');
-        $this->assertEquals(
-            0,
-            $idx,
-            '"AbstractCollectionPlus::indexOf" returned incorrect value.  Expected "0", saw "'.$idx.'"');
-
+        $collection->set('key2', 'value2');
         $firstValue = $collection->first();
         $lastValue = $collection->last();
         $this->assertEquals('value1', $firstValue);
         $this->assertEquals('value2', $lastValue);
 
-        $this->assertTrue($collection->contains('value2'));
+        $collection->append('value3');
+        $firstValue = $collection->first();
+        $lastValue = $collection->last();
+        $this->assertEquals('value1', $firstValue);
+        $this->assertEquals('value3', $lastValue);
+
+        $collection->removeElement('value3');
+        $firstValue = $collection->first();
+        $lastValue = $collection->last();
+        $this->assertEquals('value1', $firstValue);
+        $this->assertEquals('value2', $lastValue);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::set
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::append
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::removeElement
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testCollectionFirstKeyAndLastKeyMethods()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+
+        $this->assertTrue(
+            method_exists($collection,'getFirstKey'),
+            '"$collection" object did not contain public method "getFirstKey"');
+        $this->assertTrue(
+            method_exists($collection, 'getLastKey'),
+            '"$collection" object did not contain public method "getLastKey"');
+
+        $collection->set('key1', 'value1');
+        $firstKey = $collection->getFirstKey();
+        $lastKey = $collection->getLastKey();
+        $this->assertEquals('key1', $firstKey);
+        $this->assertEquals('key1', $lastKey);
+
+        $collection->set('key2', 'value2');
+        $firstKey = $collection->getFirstKey();
+        $lastKey = $collection->getLastKey();
+        $this->assertEquals('key1', $firstKey);
+        $this->assertEquals('key2', $lastKey);
+
+        $collection->append('value3');
+        $firstKey = $collection->getFirstKey();
+        $lastKey = $collection->getLastKey();
+        $this->assertEquals('key1', $firstKey);
+        $this->assertEquals(0, $lastKey);
+
+        $collection->removeElement('value3');
+        $firstKey = $collection->getFirstKey();
+        $lastKey = $collection->getLastKey();
+        $this->assertEquals('key1', $firstKey);
+        $this->assertEquals('key2', $lastKey);
     }
 
     /**

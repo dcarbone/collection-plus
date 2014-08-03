@@ -17,6 +17,31 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
     public function __toArray();
 
     /**
+     * @param mixed $param
+     * @return mixed
+     */
+    public function &__get($param);
+
+    /**
+     * @param mixed $name
+     * @param mixed $value
+     * @return void
+     */
+    public function __set($name, $value);
+
+    /**
+     * @return array
+     */
+    public function keys();
+
+    /**
+     * Get an Iterator instance for this data set
+     *
+     * @return \ArrayIterator
+     */
+    public function getIterator();
+
+    /**
      * This method was inspired by Zend Framework 2.2.x PhpReferenceCompatibility class
      *
      * @link https://github.com/zendframework/zf2/blob/release-2.2.6/library/Zend/Stdlib/ArrayObject/PhpReferenceCompatibility.php#L179

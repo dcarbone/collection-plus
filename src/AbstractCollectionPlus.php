@@ -30,41 +30,18 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     }
 
     /**
-     * Credit for this method goes to php5 dot man at lightning dot hu
-     *
-     * @link http://www.php.net/manual/en/class.arrayobject.php#107079
-     *
-     * This method allows you to call any of PHP's built-in array_* methods that would
-     * normally expect an array parameter.
-     *
-     * Example: $myobj = new $concreteClass(array('b','c','d','e','a','z')):
-     *
-     * $myobj->array_keys();  returns array(0, 1, 2, 3, 4, 5)
-     *
-     * $myobj->array_merge(array('1', '2', '3', '4', '5')); returns array('b','c','d','e','a','z','1','2','3','4,'5');
-     *
-     * And so on.
-     *
-     * WARNING:  In utilizing call_user_func_array(), using this method WILL have an adverse affect on performance.
-     * I recommend using this method only for development purposes.
-     *
-     * @param $func
-     * @param $argv
-     * @return mixed
-     * @throws \BadMethodCallException
+     * @deprecated
+     * @return array
      */
-    public function __call($func, $argv)
+    public function array_keys()
     {
-        if (!is_callable($func) || substr($func, 0, 6) !== 'array_')
-            throw new \BadMethodCallException(__CLASS__.'->'.$func);
-
-        return call_user_func_array($func, array_merge(array($this->_storage), $argv));
+        return $this->keys();
     }
 
     /**
      * @return array
      */
-    public function array_keys()
+    public function keys()
     {
         return array_keys($this->_storage);
     }
@@ -124,8 +101,9 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     public function exchangeArray($dataSet)
     {
         if (!is_array($dataSet) && !is_object($dataSet))
-            throw new \InvalidArgumentException(__CLASS__.'::exchangeArray - "$dataSet" parameter expected to be array or object');
+            throw new \InvalidArgumentException(get_class($this).'::exchangeArray - "$dataSet" parameter expected to be array or object');
 
+        // This method can accept multiple input types....
         if ($dataSet instanceof \stdClass)
             $dataSet = (array)$dataSet;
         else if ($dataSet instanceof self)
@@ -134,7 +112,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
             $dataSet = $dataSet->getArrayCopy();
 
         if (!is_array($dataSet))
-            throw new \InvalidArgumentException(__CLASS__.'::exchangeArray - Could not convert "$dataSet" value of type "'.gettype($dataSet).'" to an array!');
+            throw new \InvalidArgumentException(get_class($this).'::exchangeArray - Could not convert "$dataSet" value of type "'.gettype($dataSet).'" to an array!');
 
         $storage = $this->_storage;
         $this->_storage = $dataSet;
@@ -143,6 +121,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         $this->_lastKey = key($this->_storage);
         reset($this->_storage);
         $this->_firstKey = key($this->_storage);
+
         return $storage;
     }
 
@@ -193,7 +172,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     public function exists($func)
     {
         if (!is_callable($func, false, $callable_name))
-            throw new \InvalidArgumentException(__CLASS__.'::exists - Un-callable "$func" value seen!');
+            throw new \InvalidArgumentException(get_class($this).'::exists - Un-callable "$func" value seen!');
 
         reset($this->_storage);
 
@@ -320,7 +299,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
             }
         }
 
-        throw new \InvalidArgumentException(__CLASS__.'::setIteratorClass - The iterator class does not exist');
+        throw new \InvalidArgumentException(get_class($this).'::setIteratorClass - The iterator class does not exist');
     }
 
     /**
@@ -337,7 +316,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     public function map($func)
     {
         if (!is_callable($func, false, $callable_name))
-            throw new \InvalidArgumentException(__CLASS__.'::map - Un-callable "$func" value seen!');
+            throw new \InvalidArgumentException(get_class($this).'::map - Un-callable "$func" value seen!');
 
         if (strpos($callable_name, 'Closure::') !== 0)
             $func = $callable_name;
@@ -361,7 +340,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     public function filter($func = null)
     {
         if ($func !== null && !is_callable($func, false, $callable_name))
-            throw new \InvalidArgumentException(__CLASS__.'::filter - Un-callable "$func" value seen!');
+            throw new \InvalidArgumentException(get_class($this).'::filter - Un-callable "$func" value seen!');
 
         if ($func === null)
             return new static(array_filter($this->_storage));
@@ -711,8 +690,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     {
         if (isset($this->_storage[$offset]) || array_key_exists($offset, $this->_storage))
             return $this->_storage[$offset];
-        else
-            return null;
+
+        return null;
     }
 
     /**
