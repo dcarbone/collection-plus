@@ -195,16 +195,28 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if (!is_callable($func, false, $callable_name))
             throw new \InvalidArgumentException(__CLASS__.'::exists - Un-callable "$func" value seen!');
 
-        if (strpos($callable_name, 'Closure::') !== 0)
-            $func = $callable_name;
-
         reset($this->_storage);
-        while(($key = key($this->_storage)) !== null && ($value = current($this->_storage)) !== false)
-        {
-            if ($func($key, $value))
-                return true;
 
-            next($this->_storage);
+        if (strpos($callable_name, '::') !== false && strpos($callable_name, 'Closure') === false)
+        {
+            $exp = explode('::', $callable_name);
+            while(($key = key($this->_storage)) !== null && ($value = current($this->_storage)) !== false)
+            {
+                if ($exp[0]::$exp[1]($key, $value))
+                    return true;
+
+                next($this->_storage);
+            }
+        }
+        else
+        {
+            while(($key = key($this->_storage)) !== null && ($value = current($this->_storage)) !== false)
+            {
+                if ($func($key, $value))
+                    return true;
+
+                next($this->_storage);
+            }
         }
 
         return false;
