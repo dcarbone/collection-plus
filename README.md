@@ -3,7 +3,7 @@ collection-plus
 
 **Build Status**: [![Build Status](https://travis-ci.org/dcarbone/collection-plus.svg?branch=master)](https://travis-ci.org/dcarbone/collection-plus)
 
-A PHP 5.3+ Collection implementation that takes inspiration from multiple sources
+A PHP 5.3.3+ Collection implementation that takes inspiration from multiple sources
 
 Every PHP framework out there defines it's own Collection-style class, and each has it's own set of nice features.  The point of this class
 was to bring together as many of those collections as possible into a single class so I could take advantage of the genius
