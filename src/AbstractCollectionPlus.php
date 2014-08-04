@@ -652,7 +652,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      * (PHP 5 >= 5.1.0)
      * Seeks to a position
      * @link http://php.net/manual/en/seekableiterator.seek.php
-     * @param int $position The position to seek to.
+     * @param mixed $position The position to seek to.
      * 
      * @throws \OutOfBoundsException
      * @return void

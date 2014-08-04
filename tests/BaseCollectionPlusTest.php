@@ -994,4 +994,429 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(5, count($filtered));
         $this->assertNotContains(true, $filtered);
     }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::sort
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testSort()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'z', 'q', 'a', 'b',
+        ));
+
+        $collection->sort();
+        $this->assertTrue(
+            ($collection->first() === 'a'),
+            'First value expected to be "a", saw "'.$collection->first().'"');
+
+        $this->assertTrue(
+            ($collection->last() === 'z'),
+            'Last value expected to be "z", saw "'.$collection->last().'"');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::rsort
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testRSort()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'z', 'q', 'a', 'b',
+        ));
+
+        $collection->rsort();
+        $this->assertTrue(
+            ($collection->first() === 'z'),
+            'First value expected to be "z", saw "'.$collection->first().'"');
+
+        $this->assertTrue(
+            ($collection->last() === 'a'),
+            'Last value expected to be "a", saw "'.$collection->last().'"');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::usort
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testUSortWithAnonymousFunction()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'z', 'q', 'a', 'b',
+        ));
+
+        $collection->usort(function($a, $b) {
+            return ($a > $b ? 1 : -1);
+        });
+
+        $this->assertTrue(
+            ($collection->first() === 'a'),
+            'First value expected to be "a", saw "'.$collection->first().'"');
+        $this->assertTrue(
+            ($collection->last() === 'z'),
+            'Last value expected to be "a", saw "'.$collection->last().'"');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::ksort
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testKSort()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'z' => 'z',
+            'q' => 'q',
+            'a' => 'a',
+            'b' => 'b',
+        ));
+
+        $collection->ksort();
+        $this->assertTrue(
+            ($collection->getFirstKey() === 'a'),
+            'First key expected to be "a", saw "'.$collection->getFirstKey().'"');
+
+        $this->assertTrue(
+            ($collection->getLastKey() === 'z'),
+            'Last key expected to be "z", saw "'.$collection->getLastKey().'"');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::krsort
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testKRSort()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'z' => 'z',
+            'q' => 'q',
+            'a' => 'a',
+            'b' => 'b',
+        ));
+
+        $collection->krsort();
+        $this->assertTrue(
+            ($collection->getFirstKey() === 'z'),
+            'First key expected to be "z", saw "'.$collection->getFirstKey().'"');
+
+        $this->assertTrue(
+            ($collection->getLastKey() === 'a'),
+            'Last key expected to be "a", saw "'.$collection->getLastKey().'"');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::uksort
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testUKSort()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'z' => 'z',
+            'q' => 'q',
+            'a' => 'a',
+            'b' => 'b',
+        ));
+
+        $collection->uksort(function($a, $b) {
+            return ($a > $b ? 1 : -1);
+        });
+        $this->assertTrue(
+            ($collection->getFirstKey() === 'a'),
+            'First key expected to be "a", saw "'.$collection->getFirstKey().'"');
+
+        $this->assertTrue(
+            ($collection->getLastKey() === 'z'),
+            'Last key expected to be "z", saw "'.$collection->getLastKey().'"');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::asort
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testASort()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'z' => 'z',
+            'q' => 'q',
+            'a' => 'a',
+            'b' => 'b',
+        ));
+
+        $collection->asort();
+
+        $this->assertTrue(
+            ($collection->first() === 'a'),
+            'First value expected to be "a", saw "'.$collection->first().'"');
+        $this->assertTrue(
+            ($collection->getFirstKey() === 'a'),
+            'First key expected to be "a", saw "'.$collection->getFirstKey().'"');
+
+        $this->assertTrue(
+            ($collection->last() === 'z'),
+            'Last value expected to be "z", saw "'.$collection->last().'"');
+        $this->assertTrue(
+            ($collection->getLastKey() === 'z'),
+            'Last key expected to be "z", saw "'.$collection->getLastKey().'"');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::arsort
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testARSort()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'z' => 'z',
+            'q' => 'q',
+            'a' => 'a',
+            'b' => 'b',
+        ));
+
+        $collection->arsort();
+
+        $this->assertTrue(
+            ($collection->first() === 'z'),
+            'First value expected to be "z", saw "'.$collection->first().'"');
+        $this->assertTrue(
+            ($collection->getFirstKey() === 'z'),
+            'First key expected to be "z", saw "'.$collection->getFirstKey().'"');
+
+        $this->assertTrue(
+            ($collection->last() === 'a'),
+            'Last value expected to be "a", saw "'.$collection->last().'"');
+        $this->assertTrue(
+            ($collection->getLastKey() === 'a'),
+            'Last key expected to be "a", saw "'.$collection->getLastKey().'"');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::uasort
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testUASort()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'z' => 'z',
+            'q' => 'q',
+            'a' => 'a',
+            'b' => 'b',
+        ));
+
+        $collection->uasort(function($a, $b) {
+            return ($a > $b ? 1 : -1);
+        });
+
+        $this->assertTrue(
+            ($collection->first() === 'a'),
+            'First value expected to be "a", saw "'.$collection->first().'"');
+        $this->assertTrue(
+            ($collection->getFirstKey() === 'a'),
+            'First key expected to be "a", saw "'.$collection->getFirstKey().'"');
+
+        $this->assertTrue(
+            ($collection->last() === 'z'),
+            'Last value expected to be "z", saw "'.$collection->last().'"');
+        $this->assertTrue(
+            ($collection->getLastKey() === 'z'),
+            'Last key expected to be "z", saw "'.$collection->getLastKey().'"');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::current
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::next
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::key
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::valid
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::rewind
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testIteratorImplementation()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'key1' => 'value1',
+            'key2' => 'value2',
+            'key3' => 'value3'
+        ));
+
+        $this->assertInstanceOf('\\Iterator', $collection);
+
+        foreach(array('current', 'key', 'valid', 'rewind', 'next') as $method)
+            $this->assertTrue(
+                method_exists($collection, $method),
+                'Method "'.$method.'" not defined');
+
+        $this->assertTrue(
+            ($collection->current() === 'value1'),
+            '::current() returned incorrect value');
+
+        $this->assertTrue(
+            ($collection->key() === 'key1'),
+            '::key() returned incorrect value');
+
+        $this->assertTrue(
+            $collection->valid(),
+            '::valid() returned false');
+
+        $collection->next();
+        $this->assertTrue(
+            ($collection->current() === 'value2'),
+            '::next() did not move internal pointer correctly');
+        $this->assertTrue(
+            ($collection->key() === 'key2'),
+            '::next did not move the internal pointer correctly');
+
+        $collection->rewind();
+        $this->assertTrue(
+            ($collection->current() === 'value1'),
+            '::rewind did not reset internal pointer correctly');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::current
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::next
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::key
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::valid
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::rewind
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::hasChildren
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getChildren
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testRecursiveIteratorImplementation()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'key1' => array('value1'),
+            'key2' => 'value2',
+            'key3' => array('value3'),
+        ));
+
+        $this->assertInstanceOf('\\RecursiveIterator', $collection);
+
+        $this->assertTrue(
+            method_exists($collection, 'hasChildren'),
+            'Method "hasChildren" not found');
+        $this->assertTrue(
+            method_exists($collection, 'getChildren'),
+            'Method "getChildren" not found');
+
+        $this->assertTrue(
+            $collection->hasChildren(),
+            '::hasChildren returned false, first element should be array');
+
+        $collection->next();
+        $this->assertFalse(
+            $collection->hasChildren(),
+            '::hasChildren returned true, second element should be string');
+
+        $collection->next();
+        $this->assertTrue(
+            $collection->hasChildren(),
+            '::hasChildren returned false, third element should be array');
+
+        $collection->rewind();
+
+        $array = $collection->getChildren();
+        $this->assertTrue(
+            is_array($array),
+            '::getChildren did not return array');
+
+        $this->assertContains('value1', $array);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::seek
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::current
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::valid
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::key
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::next
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetGet
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testSeekableIteratorImplementationWithValidPosition()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'key1' => array('value1'),
+            'key2' => 'value2',
+            'key3' => array('value3'),
+        ));
+
+        $this->assertInstanceOf('\\SeekableIterator', $collection);
+
+        $this->assertTrue(
+            method_exists($collection, 'seek'),
+            'Method "seek" not found');
+
+        $this->assertTrue($collection['key1'] === array('value1'));
+
+        $collection->seek('key2');
+        $this->assertTrue(
+            ($collection->key() === 'key2'),
+            '::seek did not move the internal pointer correctly');
+        $this->assertTrue(
+            ($collection->current() === 'value2'),
+            '::seek did not move the internal pointer correctly');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::seek
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::current
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::valid
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::key
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::next
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetGet
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @expectedException \OutOfBoundsException
+     */
+    public function testSeekableIteratorThrowExceptionWithInvalidPosition()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+            'key1' => array('value1'),
+            'key2' => 'value2',
+            'key3' => array('value3'),
+        ));
+
+        $this->assertInstanceOf('\\SeekableIterator', $collection);
+
+        $this->assertTrue(
+            method_exists($collection, 'seek'),
+            'Method "seek" not found');
+
+        $this->assertTrue($collection['key1'] === array('value1'));
+
+        $collection->seek('sandwiches');
+    }
 }
