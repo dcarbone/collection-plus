@@ -202,6 +202,21 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers  \DCarbone\CollectionPlus\AbstractCollectionPlus::array_keys
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @depends testCollectionCanBeConstructedFromValidConstructorArguments
+     * @param \DCarbone\CollectionPlus\AbstractCollectionPlus|\DCarbone\CollectionPlus\BaseCollectionPlus $collection
+     */
+    public function testCanUseDeprecatedArrayKeysMethod(\DCarbone\CollectionPlus\BaseCollectionPlus $collection)
+    {
+        $keys = $collection->array_keys();
+        $this->assertTrue(is_array($keys));
+        $this->assertEquals(1, count($keys));
+
+        $this->assertContains('test', $keys);
+    }
+
+    /**
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exchangeArray
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
@@ -585,5 +600,46 @@ class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($shouldExist);
         $this->assertNotTrue($shouldNotExist);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::setIteratorClass
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getIteratorClass
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testCanSetValidIteratorClassWithLeadingSlashes()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection->setIteratorClass('\\ArrayIterator');
+        $this->assertTrue(
+            ('\\ArrayIterator' === $collection->getIteratorClass()));
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::setIteratorClass
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getIteratorClass
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     */
+    public function testCanSetValidIteratorClassWithoutLeadingSlashes()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection->setIteratorClass('ArrayIterator');
+
+        $this->assertTrue(
+            ('\\ArrayIterator' === $collection->getIteratorClass()));
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::setIteratorClass
+     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @expectedException \InvalidArgumentException
+     */
+    public function testExceptionThrownWhenUndefinedIteratorClassSet()
+    {
+        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection->setIteratorClass('\\MyAwesomeIterator');
     }
 }

@@ -283,20 +283,13 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function setIteratorClass($class)
     {
+        if (strpos($class, '\\') !== 0)
+            $class = '\\' . $class;
+
         if (class_exists($class))
         {
             $this->iteratorClass = $class;
             return;
-        }
-
-        if (strpos($class, '\\') === 0)
-        {
-            $class = '\\' . $class;
-            if (class_exists($class))
-            {
-                $this->iteratorClass = $class;
-                return;
-            }
         }
 
         throw new \InvalidArgumentException(get_class($this).'::setIteratorClass - The iterator class does not exist');
