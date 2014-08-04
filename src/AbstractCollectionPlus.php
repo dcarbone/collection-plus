@@ -30,6 +30,15 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     }
 
     /**
+     * @param array $data
+     * @return \DCarbone\CollectionPlus\ICollectionPlus
+     */
+    protected function initNew(array $data = array())
+    {
+        return new static($data);
+    }
+
+    /**
      * @deprecated
      * @return array
      */
@@ -174,25 +183,34 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if (!is_callable($func, false, $callable_name))
             throw new \InvalidArgumentException(get_class($this).'::exists - Un-callable "$func" value seen!');
 
+        // Reset internal array pointer
         reset($this->_storage);
 
+        // If this is a method on an object (except for \Closure), parse and continue
         if (strpos($callable_name, '::') !== false && strpos($callable_name, 'Closure') === false)
         {
             $exp = explode('::', $callable_name);
             while(($key = key($this->_storage)) !== null && ($value = current($this->_storage)) !== false)
             {
                 if ($exp[0]::$exp[1]($key, $value))
+                {
+                    reset($this->_storage);
                     return true;
+                }
 
                 next($this->_storage);
             }
         }
+        // Else execute as normal
         else
         {
             while(($key = key($this->_storage)) !== null && ($value = current($this->_storage)) !== false)
             {
                 if ($func($key, $value))
+                {
+                    reset($this->_storage);
                     return true;
+                }
 
                 next($this->_storage);
             }
@@ -300,21 +318,18 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      *
      * @link http://us1.php.net/array_map
      *
-     * They scope "static" is used so that an instance of the extended class is returned.
+     * The scope "static" is used so that an instance of the extended class is returned.
      *
      * @param callable $func
      * @throws \InvalidArgumentException
-     * @return static
+     * @return \DCarbone\CollectionPlus\ICollectionPlus
      */
     public function map($func)
     {
-        if (!is_callable($func, false, $callable_name))
+        if (!is_callable($func, false))
             throw new \InvalidArgumentException(get_class($this).'::map - Un-callable "$func" value seen!');
 
-        if (strpos($callable_name, 'Closure::') !== 0)
-            $func = $callable_name;
-
-        return new static(array_map($func, $this->_storage));
+        return $this->initNew(array_map($func, $this->_storage));
     }
 
     /**
@@ -328,20 +343,17 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      *
      * @param callable $func
      * @throws \InvalidArgumentException
-     * @return static
+     * @return \DCarbone\CollectionPlus\ICollectionPlus
      */
     public function filter($func = null)
     {
-        if ($func !== null && !is_callable($func, false, $callable_name))
+        if ($func !== null && !is_callable($func, false))
             throw new \InvalidArgumentException(get_class($this).'::filter - Un-callable "$func" value seen!');
 
         if ($func === null)
-            return new static(array_filter($this->_storage));
+            return $this->initNew(array_filter($this->_storage));
 
-        if (strpos($callable_name, 'Closure::') !== 0)
-            $func = $callable_name;
-
-        return new static(array_filter($this->_storage, $func));
+        return $this->initNew(array_filter($this->_storage, $func));
     }
 
     /**

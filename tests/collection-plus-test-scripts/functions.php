@@ -21,27 +21,22 @@ function _exists_function_failure_test($key, $value)
 }
 
 /**
- * Class ExistsTests
+ * @param mixed $value
+ * @return mixed
  */
-class ExistsTests
+function _map_function_change_odd_values_to_null($value)
 {
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     * @return bool
-     */
-    public static function _exists_function_success_test($key, $value)
-    {
-        return ($key === 'test' && $value === 'value');
-    }
+    if ($value % 2 === 0)
+        return $value;
 
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     * @return bool
-     */
-    public static function _exists_function_failure_test($key, $value)
-    {
-        return ($key === 'tasty' && $value === 'sandwich');
-    }
+    return null;
+}
+
+/**
+ * @param bool $value
+ * @return bool
+ */
+function _filter_function_remove_true_values($value)
+{
+    return ($value === false);
 }
