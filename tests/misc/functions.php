@@ -5,7 +5,7 @@
  * @param mixed $value
  * @return bool
  */
-function _exists_function_success_test($key, $value)
+function _collection_exists_success_test($key, $value)
 {
     return ($key === 'test' && $value === 'value');
 }
@@ -15,7 +15,7 @@ function _exists_function_success_test($key, $value)
  * @param mixed $value
  * @return bool
  */
-function _exists_function_failure_test($key, $value)
+function _collection_exists_failure_test($key, $value)
 {
     return ($key === 'tasty' && $value === 'sandwich');
 }
@@ -24,7 +24,7 @@ function _exists_function_failure_test($key, $value)
  * @param mixed $value
  * @return mixed
  */
-function _map_function_change_odd_values_to_null($value)
+function _collection_map_change_odd_values_to_null($value)
 {
     if ($value % 2 === 0)
         return $value;
@@ -36,7 +36,7 @@ function _map_function_change_odd_values_to_null($value)
  * @param bool $value
  * @return bool
  */
-function _filter_function_remove_true_values($value)
+function _collection_filter_remove_true_values($value)
 {
     return ($value === false);
 }

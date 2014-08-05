@@ -2,8 +2,8 @@
 
 date_default_timezone_set('UTC');
 
-require_once realpath(__DIR__.'/test-scripts/functions.php');
-require_once realpath(__DIR__.'/test-scripts/classes.php');
+require_once realpath(dirname(__DIR__).'/misc/functions.php');
+require_once realpath(dirname(__DIR__).'/misc/classes.php');
 
 /**
  * Class CollectionPlusTest
@@ -77,7 +77,6 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetUnset
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetGet
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
-     * @uses \DCarbone\CollectionPlus\BaseCollectionPlus
      */
     public function testArrayAccessImplementationCorrect()
     {
@@ -416,6 +415,7 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
             '"$collection" object did not contain public method "append"');
 
         $collection->append('value1');
+
         $this->assertArrayHasKey(0, $collection);
         $this->assertEquals('value1', $collection[0]);
     }
@@ -625,8 +625,8 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
      */
     public function testExistsWithStringGlobalFunctionName(\DCarbone\CollectionPlus\BaseCollectionPlus $collection)
     {
-        $shouldExist = $collection->exists('_exists_function_success_test');
-        $shouldNotExist = $collection->exists('_exists_function_failure_test');
+        $shouldExist = $collection->exists('_collection_exists_success_test');
+        $shouldNotExist = $collection->exists('_collection_exists_failure_test');
 
         $this->assertTrue($shouldExist);
         $this->assertNotTrue($shouldNotExist);
@@ -635,14 +635,14 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exists
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
-     * @uses \ExistsTests
+     * @uses \CollectionPlusTests
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
      * @param \DCarbone\CollectionPlus\BaseCollectionPlus $collection
      */
     public function testExistsWithStringObjectStaticMethodName(\DCarbone\CollectionPlus\BaseCollectionPlus $collection)
     {
-        $shouldExist = $collection->exists(array('\\ExistsTests', '_exists_function_success_test'));
-        $shouldNotExist = $collection->exists(array('\\ExistsTests', '_exists_function_failure_test'));
+        $shouldExist = $collection->exists(array('\\CollectionPlusTests', '_collection_exists_success_test'));
+        $shouldNotExist = $collection->exists(array('\\CollectionPlusTests', '_collection_exists_failure_test'));
 
         $this->assertTrue($shouldExist);
         $this->assertNotTrue($shouldNotExist);
@@ -772,7 +772,7 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(10, count($collection));
 
-        $mapped = $collection->map('_map_function_change_odd_values_to_null');
+        $mapped = $collection->map('_collection_map_change_odd_values_to_null');
         $this->assertEquals(10, count($mapped));
 
         $this->assertNull($mapped[1]);
@@ -786,6 +786,7 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @uses CollectionPlusTests
      */
     public function testMapWithObjectStaticMethod()
     {
@@ -795,7 +796,7 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(10, count($collection));
 
-        $mapped = $collection->map(array('MapTests', '_map_function_change_odd_values_to_null'));
+        $mapped = $collection->map(array('CollectionPlusTests', '_collection_map_change_odd_values_to_null'));
         $this->assertEquals(10, count($mapped));
 
         $this->assertNull($mapped[1]);
@@ -905,7 +906,7 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(10, count($collection));
 
-        $filtered = $collection->filter('_filter_function_remove_true_values');
+        $filtered = $collection->filter('_collection_filter_remove_true_values');
         $this->assertEquals(5, count($filtered));
         $this->assertNotContains(true, $filtered);
     }
@@ -917,6 +918,7 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @uses \CollectionPlusTests
      */
     public function testFilterWithObjectStaticFunction()
     {
@@ -931,7 +933,7 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(10, count($collection));
 
-        $filtered = $collection->filter(array('FilterTests', '_filter_function_remove_true_values'));
+        $filtered = $collection->filter(array('CollectionPlusTests', '_collection_filter_remove_true_values'));
         $this->assertEquals(5, count($filtered));
         $this->assertNotContains(true, $filtered);
     }

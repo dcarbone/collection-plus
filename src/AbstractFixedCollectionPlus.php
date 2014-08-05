@@ -111,10 +111,17 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
 
     /**
      * @param int $size
+     * @throws \InvalidArgumentException
      * @return int
      */
     public function setSize($size)
     {
+        if (!is_int($size))
+            throw new \InvalidArgumentException('SplFixedArray::setSize() expects parameter 1 to be long, '.gettype($size).' given');
+
+        if ($size < 0)
+            throw new \InvalidArgumentException('SplFixedArray::setSize() expects parameter 1 to be positive, negative value given');
+
         $return = parent::setSize($size);
         $this->size = $size;
         return $return;
@@ -148,16 +155,29 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
     public function exists($func)
     {
         if (!is_callable($func, false, $callable_name))
-            throw new \InvalidArgumentException(__CLASS__.'::exists - Un-callable "$func" value seen!');
+            throw new \InvalidArgumentException(get_class($this).'::exists - Un-callable "$func" value seen!');
 
-        if (strpos($callable_name, 'Closure::') !== 0)
-            $func = $callable_name;
-
+        // Get the current size of this collection
         $currentSize = $this->getSize();
-        for ($i = 0; $i < $currentSize; $i++)
+
+        // If this is a method on an object (except for \Closure), parse and continue
+        if (strpos($callable_name, '::') !== false && strpos($callable_name, 'Closure') === false)
         {
-            if ((bool)$func($this[$i]) === true)
-                return true;
+            $exp = explode('::', $callable_name);
+            for ($i = 0; $i < $currentSize; $i++)
+            {
+                if ($exp[0]::$exp[1]($this[$i]) === true)
+                    return true;
+            }
+        }
+        // Else, execute raw $func value as function
+        else
+        {
+            for ($i = 0; $i < $currentSize; $i++)
+            {
+                if ($func($this[$i]) === true)
+                    return true;
+            }
         }
 
         return false;
@@ -177,7 +197,7 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
     public function map($func)
     {
         if (!is_callable($func, false, $callable_name))
-            throw new \InvalidArgumentException(__CLASS__.'::map - Un-callable "$func" value seen!');
+            throw new \InvalidArgumentException(get_class($this).'::map - Un-callable "$func" value seen!');
 
         if (strpos($callable_name, 'Closure::') !== 0)
             $func = $callable_name;
@@ -210,7 +230,7 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
     public function filter($func = null)
     {
         if ($func !== null && !is_callable($func, false, $callable_name))
-            throw new \InvalidArgumentException(__CLASS__.'::filter - Un-callable "$func" value seen!');
+            throw new \InvalidArgumentException(get_class($this).'::filter - Un-callable "$func" value seen!');
 
         /** @var \DCarbone\CollectionPlus\AbstractFixedCollectionPlus $new */
         $currentSize = $this->getSize();
@@ -266,7 +286,7 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      */
     public function isEmpty()
     {
-        return $this->getSize() === 0;
+        return $this->size === 0;
     }
 
     /**

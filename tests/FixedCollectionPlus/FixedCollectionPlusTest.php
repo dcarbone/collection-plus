@@ -2,8 +2,8 @@
 
 date_default_timezone_set('UTC');
 
-require_once realpath(__DIR__.'/test-scripts/functions.php');
-require_once realpath(__DIR__.'/test-scripts/classes.php');
+require_once realpath(dirname(__DIR__).'/misc/functions.php');
+require_once realpath(dirname(__DIR__).'/misc/classes.php');
 
 /**
  * Class FixedCollectionPlusTest
@@ -13,7 +13,7 @@ class FixedCollectionPlusTest extends PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
      * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::getSize
-     * @return \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
      */
     public function testCanConstructNewFixedCollectionWithNoParameter()
     {
@@ -24,14 +24,12 @@ class FixedCollectionPlusTest extends PHPUnit_Framework_TestCase
             $fixedCollection);
 
         $this->assertEquals(0, $fixedCollection->getSize());
-
-        return $fixedCollection;
     }
 
     /**
      * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
      * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::getSize
-     * @return \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
      */
     public function testCanConstructNewFixedCollectionWithValidParameter()
     {
@@ -42,8 +40,6 @@ class FixedCollectionPlusTest extends PHPUnit_Framework_TestCase
             $fixedCollection);
 
         $this->assertEquals(5, $fixedCollection->getSize());
-
-        return $fixedCollection;
     }
 
     /**
@@ -169,29 +165,117 @@ class FixedCollectionPlusTest extends PHPUnit_Framework_TestCase
      */
     public function testToArrayMethod()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(5);
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(5);
         $this->assertTrue(
-            method_exists($collection, '__toArray'),
+            method_exists($fixedCollection, '__toArray'),
             '::__toArray not defined');
 
-        $array = $collection->__toArray();
+        $array = $fixedCollection->__toArray();
         $this->assertTrue(
             is_array($array),
             '::__toArray returned non-array value');
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::append
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::getSize
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::append
      * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
      */
     public function testAppendMethod()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(0);
-        $this->assertEquals(0, $collection->getSize());
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(0);
+        $this->assertEquals(0, $fixedCollection->getSize());
 
-        $collection->append('test');
-        $this->assertEquals(1, $collection->getSize());
+        $fixedCollection->append('test');
+        $this->assertEquals(1, $fixedCollection->getSize());
 
-        $this->assertContains('test', $collection);
+        $this->assertContains('test', $fixedCollection);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::contains
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::fromArray
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetGet
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testContainsReturnTrueWithValidSearch()
+    {
+        $fixedCollection = \DCarbone\CollectionPlus\BaseFixedCollectionPlus::fromArray(
+            array(1, 2, 3, 'test', 5));
+
+        $contains = $fixedCollection->contains('test');
+        $this->assertTrue($contains, '::contains returned false when expected to return true');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::contains
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::fromArray
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetGet
+     */
+    public function testContainsReturnsFalseWithInvalidSearch()
+    {
+        $fixedCollection = \DCarbone\CollectionPlus\BaseFixedCollectionPlus::fromArray(
+            array(1, 2, 3, 'test', 5));
+
+        $contains = $fixedCollection->contains('sandwiches');
+        $this->assertFalse($contains, '::contains returned true when expected to return false');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::setSize
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::getSize
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testCanIncreaseSizeOfEmptyCollectionWithValidInteger()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus();
+        $this->assertEquals(0, $fixedCollection->getSize());
+        $fixedCollection->setSize(1);
+        $this->assertEquals(1, $fixedCollection->getSize());
+        $fixedCollection[0] = 'test';
+        $this->assertTrue(($fixedCollection[0] === 'test'));
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::setSize
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testCanReduceSizeOfCollectionWIthValidInteger()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(50);
+
+        $this->assertEquals(50, $fixedCollection->getSize());
+        $fixedCollection->setSize(25);
+        $this->assertEquals(25, $fixedCollection->getSize());
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::setSize
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     * @expectedException \InvalidArgumentException
+     */
+    public function testExceptionThrownWhenSettingSizeOfCollectionWithNonIntegerParameter()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(25);
+        $fixedCollection->setSize('sandwich');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::setSize
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     * @expectedException \InvalidArgumentException
+     */
+    public function testExceptionThrownWhenSettingSizeOfCollectionWithNegativeInteger()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(25);
+        $fixedCollection->setSize(-5);
     }
 }
