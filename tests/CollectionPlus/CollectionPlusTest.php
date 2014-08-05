@@ -2,18 +2,18 @@
 
 date_default_timezone_set('UTC');
 
-require_once realpath(__DIR__.'/collection-plus-test-scripts/functions.php');
-require_once realpath(__DIR__.'/collection-plus-test-scripts/classes.php');
+require_once realpath(__DIR__.'/test-scripts/functions.php');
+require_once realpath(__DIR__.'/test-scripts/classes.php');
 
 /**
- * Class BaseCollectionPlusTest
+ * Class CollectionPlusTest
  */
-class BaseCollectionPlusTest extends PHPUnit_Framework_TestCase
+class CollectionPlusTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
      * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
-     * @return BaseCollectionPlusTest
+     * @return CollectionPlusTest
      */
     public function testCollectionCanBeConstructedFromValidConstructorArguments()
     {

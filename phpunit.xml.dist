@@ -11,10 +11,16 @@
         backupGlobals="false"
         syntaxCheck="true"
         >
-    <testsuite name="CollectionPlus tests">
-        <directory>./tests</directory>
-        <exclude>./tests/collection-plus-test-scripts</exclude>
+    <testsuite name="CollectionPlus">
+        <directory>./tests/CollectionPlus</directory>
+        <exclude>./tests/CollectionPlus/test-scripts</exclude>
     </testsuite>
+
+    <testsuite name="FixedCollectionPlus">
+        <directory>./tests/FixedCollectionPlus</directory>
+        <exclude>./tests/FixedCollectionPlus/test-scripts</exclude>
+    </testsuite>
+
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./src</directory>
