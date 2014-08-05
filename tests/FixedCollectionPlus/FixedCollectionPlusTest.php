@@ -44,7 +44,7 @@ class FixedCollectionPlusTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
      * @expectedException \InvalidArgumentException
      */
     public function testExceptionThrownWhenTryingToConstructCollectionWithInvalidParameter()
@@ -349,5 +349,337 @@ class FixedCollectionPlusTest extends PHPUnit_Framework_TestCase
         $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus();
         $last = $fixedCollection->last();
         $this->assertNull($last);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::exists
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::fromArray
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testExistsWithStringGlobalFunctionName()
+    {
+        $fixedCollection = \DCarbone\CollectionPlus\BaseFixedCollectionPlus::fromArray(
+            array('no', 'yes', 'test', true, false));
+
+        $shouldExist = $fixedCollection->exists('_fixed_collection_exists_success_test');
+        $shouldNotExist = $fixedCollection->exists('_fixed_collection_exists_failure_test');
+
+        $this->assertTrue($shouldExist);
+        $this->assertFalse($shouldNotExist);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::fromArray
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::exists
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     * @uses \FixedCollectionPlusTests
+     */
+    public function testExistsWithStringObjectStaticMethodName()
+    {
+        $fixedCollection = \DCarbone\CollectionPlus\BaseFixedCollectionPlus::fromArray(
+            array('no', 'yes', 'test', true, false));
+
+        $shouldExist = $fixedCollection->exists(array('\\FixedCollectionPlusTests', '_fixed_collection_exists_success_test'));
+        $shouldNotExist = $fixedCollection->exists(array('\\FixedCollectionPlusTests', '_fixed_collection_exists_failure_test'));
+
+        $this->assertTrue($shouldExist);
+        $this->assertNotTrue($shouldNotExist);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::exists
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::fromArray
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testExistsWithAnonymousFunction()
+    {
+        $fixedCollection = \DCarbone\CollectionPlus\BaseFixedCollectionPlus::fromArray(
+            array('no', 'yes', 'test', true, false));
+
+        $shouldExist = $fixedCollection->exists(function($value) {
+            return ($value === 'test');
+        });
+
+        $shouldNotExist = $fixedCollection->exists(function($value) {
+            return ($value === 'sandwich');
+        });
+
+        $this->assertTrue($shouldExist);
+        $this->assertNotTrue($shouldNotExist);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::map
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     * @expectedException \InvalidArgumentException
+     */
+    public function testMapThrowsExceptionWhenUncallableFuncPassed()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus();
+        $fixedCollection->map('this_function_doesnt_exist');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::map
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testMapWithGlobalFunction()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(10);
+        for($i = 0; $i < 10; $i++)
+            $fixedCollection[$i] = $i;
+
+        $this->assertEquals(10, count($fixedCollection));
+
+        $mapped = $fixedCollection->map('_fixed_collection_map_change_odd_values_to_null');
+        $this->assertEquals(10, count($mapped));
+
+        $this->assertNull($mapped[1]);
+        $this->assertNotNull($mapped[0]);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::map
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     * @uses FixedCollectionPlusTests
+     */
+    public function testMapWithObjectStaticMethod()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(10);
+        for($i = 0; $i < 10; $i++)
+            $fixedCollection[$i] = $i;
+
+        $this->assertEquals(10, count($fixedCollection));
+
+        $mapped = $fixedCollection->map(array('FixedCollectionPlusTests', '_fixed_collection_map_change_odd_values_to_null'));
+        $this->assertEquals(10, count($mapped));
+
+        $this->assertNull($mapped[1]);
+        $this->assertNotNull($mapped[0]);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::map
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testMapWithAnonymousFunction()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(10);
+        for($i = 0; $i < 10; $i++)
+            $fixedCollection[$i] = $i;
+
+        $mapped = $fixedCollection->map(function ($value) {
+            if ($value % 2 === 0)
+                return $value;
+
+            return null;
+        });
+        $this->assertEquals(10, count($mapped));
+
+        $this->assertNull($mapped[1]);
+        $this->assertNotNull($mapped[0]);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::map
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     * @uses \MySuperAwesomeCollectionClass
+     */
+    public function testMapWithAnonymousFunctionReturnsInstanceOfExtendedClass()
+    {
+        $fixedCollection = new MySuperAwesomeFixedCollectionClass(10);
+
+        for($i = 0; $i < 10; $i++)
+            $fixedCollection[$i] = $i;
+
+        $mapped = $fixedCollection->map(function ($value) {
+            if ($value % 2 === 0)
+                return $value;
+
+            return null;
+        });
+        
+        $this->assertEquals(10, count($mapped));
+
+        $this->assertNull($mapped[1]);
+        $this->assertNotNull($mapped[0]);
+
+        $this->assertInstanceOf('\\MySuperAwesomeFixedCollectionClass', $mapped);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::filter
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::count
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testFilterWithNoCallableParameter()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(10);
+        for($i = 0; $i < 10; $i++)
+        {
+            if ($i % 2 === 0)
+                $fixedCollection[$i] = true;
+            else
+                $fixedCollection[$i] = false;
+        }
+
+        $this->assertEquals(10, count($fixedCollection));
+
+        $filtered = $fixedCollection->filter();
+        $this->assertEquals(5, count($filtered));
+        $this->assertNotContains(false, $filtered);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::filter
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::count
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testFilterWithGlobalFunction()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(10);
+        for($i = 0; $i < 10; $i++)
+        {
+            if ($i % 2 === 0)
+                $fixedCollection[$i] = true;
+            else
+                $fixedCollection[$i] = false;
+        }
+
+        $this->assertEquals(10, count($fixedCollection));
+
+        $filtered = $fixedCollection->filter('_collection_filter_remove_true_values');
+        $this->assertEquals(5, count($filtered));
+        $this->assertNotContains(true, $filtered);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::filter
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::count
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     * @uses \CollectionPlusTests
+     */
+    public function testFilterWithObjectStaticFunction()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(10);
+        for($i = 0; $i < 10; $i++)
+        {
+            if ($i % 2 === 0)
+                $fixedCollection[$i] = true;
+            else
+                $fixedCollection[$i] = false;
+        }
+
+        $this->assertEquals(10, count($fixedCollection));
+
+        $filtered = $fixedCollection->filter(array('CollectionPlusTests', '_collection_filter_remove_true_values'));
+        $this->assertEquals(5, count($filtered));
+        $this->assertNotContains(true, $filtered);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::filter
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::count
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testFilterWithAnonymousFunction()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(10);
+        for($i = 0; $i < 10; $i++)
+        {
+            if ($i % 2 === 0)
+                $fixedCollection[$i] = true;
+            else
+                $fixedCollection[$i] = false;
+        }
+
+        $this->assertEquals(10, count($fixedCollection));
+
+        $filtered = $fixedCollection->filter(function ($value) {
+            return ($value === false);
+        });
+
+        $this->assertEquals(5, count($filtered));
+        $this->assertNotContains(true, $filtered);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::filter
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetSet
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testFilterWithAnonymousFunctionReturnsInstanceOfExtendedClass()
+    {
+        $fixedCollection = new MySuperAwesomeFixedCollectionClass(10);
+        for($i = 0; $i < 10; $i++)
+        {
+            if ($i % 2 === 0)
+                $fixedCollection[$i] = true;
+            else
+                $fixedCollection[$i] = false;
+        }
+
+        $this->assertEquals(10, count($fixedCollection));
+
+        $filtered = $fixedCollection->filter(function ($value) {
+            return ($value === false);
+        });
+
+        $this->assertInstanceOf('\\MySuperAwesomeFixedCollectionClass', $filtered);
+        $this->assertEquals(5, count($filtered));
+        $this->assertNotContains(true, $filtered);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::fromArray
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::indexOf
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetGet
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testIndexOfReturnsValidIndexWithValidParameter()
+    {
+        $fixedCollection = \DCarbone\CollectionPlus\BaseFixedCollectionPlus::fromArray(
+            array('value1', 'value2', 'value3'));
+
+        $idx = $fixedCollection->indexOf('value2');
+        $this->assertEquals(1, $idx);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::fromArray
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::indexOf
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::offsetGet
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testIndexOfReturnsNegativeOneWithNonExistentParameter()
+    {
+        $fixedCollection = \DCarbone\CollectionPlus\BaseFixedCollectionPlus::fromArray(
+            array('value1', 'value2', 'value3'));
+
+        $idx = $fixedCollection->indexOf('sandwiches');
+        $this->assertEquals(-1, $idx);
     }
 }

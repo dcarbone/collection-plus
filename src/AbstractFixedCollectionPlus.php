@@ -184,7 +184,7 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
     }
 
     /**
-     * Applies array_map to this dataset, and returns a new object.
+     * Clones the functionality of array_map and applies it to this collection, returning a new object.
      *
      * @link http://us1.php.net/array_map
      *
@@ -192,30 +192,41 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      *
      * @param callable $func
      * @throws \InvalidArgumentException
-     * @return static
+     * @return \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
      */
     public function map($func)
     {
         if (!is_callable($func, false, $callable_name))
             throw new \InvalidArgumentException(get_class($this).'::map - Un-callable "$func" value seen!');
 
-        if (strpos($callable_name, 'Closure::') !== 0)
-            $func = $callable_name;
-
         /** @var \DCarbone\CollectionPlus\AbstractFixedCollectionPlus $new */
         $currentSize = $this->getSize();
+
+        // Create new instance
         $new = new static($currentSize);
 
-        for($i = 0; $i < $currentSize; $i++)
+        // If this is a method on an object (except for \Closure), parse and continue
+        if (strpos($callable_name, '::') !== false && strpos($callable_name, 'Closure') === false)
         {
-            $new[$i] = $func($this[$i]);
+            $exp = explode('::', $callable_name);
+            for($i = 0; $i < $currentSize; $i++)
+            {
+                $new[$i] = $exp[0]::$exp[1]($this[$i]);
+            }
+        }
+        else
+        {
+            for($i = 0; $i < $currentSize; $i++)
+            {
+                $new[$i] = $func($this[$i]);
+            }
         }
 
         return $new;
     }
 
     /**
-     * Applies array_filter to internal dataset, returns new instance with resulting values.
+     * Applies array_filter to internal collection, returns new instance with resulting values.
      *
      * @link http://www.php.net/manual/en/function.array-filter.php
      *
@@ -225,7 +236,7 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
      *
      * @param callable $func
      * @throws \InvalidArgumentException
-     * @return static
+     * @return \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
      */
     public function filter($func = null)
     {
@@ -239,13 +250,23 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
 
         if ($func !== null && isset($callable_name))
         {
-            if (strpos($callable_name, 'Closure::') !== 0)
-                $func = $callable_name;
-
-            for ($i = 0; $i < $currentSize; $i++)
+            // If this is a method on an object (except for \Closure), parse and continue
+            if (strpos($callable_name, '::') !== false && strpos($callable_name, 'Closure') === false)
             {
-                if ((bool)$func($this[$i]) !== false)
-                    $new[$newSize++] = $this[$i];
+                $exp = explode('::', $callable_name);
+                for($i = 0; $i < $currentSize; $i++)
+                {
+                    if ((bool)$exp[0]::$exp[1]($this[$i]) === true)
+                        $new[$newSize++] = $this[$i];;
+                }
+            }
+            else
+            {
+                for ($i = 0; $i < $currentSize; $i++)
+                {
+                    if ((bool)$func($this[$i]) !== false)
+                        $new[$newSize++] = $this[$i];
+                }
             }
         }
         else
@@ -290,7 +311,7 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
     }
 
     /**
-     * Return the first item in the dataset
+     * Return the first item in the collection
      *
      * @return mixed
      */
@@ -303,7 +324,7 @@ class AbstractFixedCollectionPlus extends \SplFixedArray implements IFixedCollec
     }
 
     /**
-     * Return the last element in the dataset
+     * Return the last element in the collection
      *
      * @return mixed
      */

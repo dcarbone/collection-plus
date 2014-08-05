@@ -314,7 +314,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     }
 
     /**
-     * Applies array_map to this dataset, and returns a new object.
+     * Applies array_map to this collection, and returns a new object.
      *
      * @link http://us1.php.net/array_map
      *
@@ -333,7 +333,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     }
 
     /**
-     * Applies array_filter to internal dataset, returns new instance with resulting values.
+     * Applies array_filter to internal collection, returns new instance with resulting values.
      *
      * @link http://www.php.net/manual/en/function.array-filter.php
      *
