@@ -14,7 +14,7 @@ of others while adding my own flair.
 
 ```json
 "require" : {
-    "dcarbone/collection-plus" : "2.0.*"
+    "dcarbone/collection-plus" : "2.1.*"
 }
 ```
 
