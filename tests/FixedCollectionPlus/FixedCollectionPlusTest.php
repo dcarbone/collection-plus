@@ -278,4 +278,76 @@ class FixedCollectionPlusTest extends PHPUnit_Framework_TestCase
         $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus(25);
         $fixedCollection->setSize(-5);
     }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::setSize
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::isEmpty
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testEmptyMethod()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus();
+        $this->assertTrue($fixedCollection->isEmpty(), '::isEmpty() returned false when expected true');
+        $fixedCollection->setSize(1);
+        $this->assertFalse($fixedCollection->isEmpty(), '::isEmpty() returned true when expected false');
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::fromArray
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::first
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::isEmpty
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testCanGetFirstResultFromPopulatedCollection()
+    {
+        $fixedCollection = \DCarbone\CollectionPlus\BaseFixedCollectionPlus::fromArray(
+            array('value1', 'value2', 'value3'));
+
+        $first = $fixedCollection->first();
+        $this->assertTrue(($first === 'value1'));
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::fromArray
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::last
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::isEmpty
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testCanGetLastResultFromPopulatedCollection()
+    {
+        $fixedCollection = \DCarbone\CollectionPlus\BaseFixedCollectionPlus::fromArray(
+            array('value1', 'value2', 'value3'));
+
+        $last = $fixedCollection->last();
+        $this->assertTrue(($last === 'value3'));
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::first
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::isEmpty
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testFirstReturnsNullWithEmptyCollection()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus();
+        $first = $fixedCollection->first();
+        $this->assertNull($first);
+    }
+
+    /**
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::__construct
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::last
+     * @covers \DCarbone\CollectionPlus\AbstractFixedCollectionPlus::isEmpty
+     * @uses \DCarbone\CollectionPlus\AbstractFixedCollectionPlus
+     */
+    public function testLastReturnsNullWithEmptyCollection()
+    {
+        $fixedCollection = new \DCarbone\CollectionPlus\BaseFixedCollectionPlus();
+        $last = $fixedCollection->last();
+        $this->assertNull($last);
+    }
 }
