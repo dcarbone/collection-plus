@@ -83,7 +83,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     public function &__get($param)
     {
         if (!$this->offsetExists($param))
-            throw new \OutOfRangeException('No data element with the key "'.$param.'" found');
+            throw new \OutOfRangeException(get_class($this).' - No data element with the key "'.$param.'" found');
 
         return $this->_storage[$param];
     }
