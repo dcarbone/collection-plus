@@ -11,49 +11,49 @@ require_once realpath(dirname(__DIR__).'/misc/classes.php');
 class CollectionPlusTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @uses \DCarbone\AbstractCollectionPlus
      * @return CollectionPlusTest
      */
     public function testCollectionCanBeConstructedFromValidConstructorArguments()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array('test' => 'value'));
-        $this->assertInstanceOf('DCarbone\\CollectionPlus\\AbstractCollectionPlus', $collection);
+        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
+        $this->assertInstanceOf('DCarbone\\AbstractCollectionPlus', $collection);
         return $collection;
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
-     * @return \DCarbone\CollectionPlus\BaseCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @uses \DCarbone\AbstractCollectionPlus
+     * @return \DCarbone\CollectionPlus
      */
     public function testCollectionCanBeConstructedWithNoConstructorArguments()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
-        $this->assertInstanceOf('DCarbone\\CollectionPlus\\AbstractCollectionPlus', $collection);
+        $collection = new \DCarbone\CollectionPlus();
+        $this->assertInstanceOf('DCarbone\\AbstractCollectionPlus', $collection);
         return $collection;
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\BaseCollectionPlus $collection
+     * @param \DCarbone\CollectionPlus $collection
      */
-    public function testCountableImplementationCorrect(\DCarbone\CollectionPlus\BaseCollectionPlus $collection)
+    public function testCountableImplementationCorrect(\DCarbone\CollectionPlus $collection)
     {
         $this->assertInstanceOf('Countable', $collection);
         $this->assertEquals(1, count($collection));
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::serialize
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::unserialize
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::serialize
+     * @covers \DCarbone\AbstractCollectionPlus::unserialize
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\BaseCollectionPlus $collection
+     * @param \DCarbone\CollectionPlus $collection
      */
-    public function testSerializableImplementationCorrect(\DCarbone\CollectionPlus\BaseCollectionPlus $collection)
+    public function testSerializableImplementationCorrect(\DCarbone\CollectionPlus $collection)
     {
         $this->assertInstanceOf('Serializable', $collection);
 
@@ -64,23 +64,23 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
 
         $unserialized = unserialize($serialized);
         $this->assertInstanceOf(
-            'DCarbone\\CollectionPlus\\AbstractCollectionPlus',
+            'DCarbone\\AbstractCollectionPlus',
             $unserialized);
 
         $this->assertArrayHasKey('test', $unserialized);
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetExists
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetUnset
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetGet
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::offsetExists
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::offsetUnset
+     * @covers \DCarbone\AbstractCollectionPlus::offsetGet
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testArrayAccessImplementationCorrect()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'key1' => 'value1',
             'key2' => 'value2',
             0 => 'value3'
@@ -116,14 +116,14 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetUnset
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::offsetUnset
+     * @uses \DCarbone\AbstractCollectionPlus
      * @expectedException \OutOfBoundsException
      */
     public function testExceptionThrownWhenInvalidOffsetUnset()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'key1' => 'value1',
             'key2' => 'value2',
             0 => 'value3'
@@ -133,21 +133,21 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__get
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__set
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::__get
+     * @covers \DCarbone\AbstractCollectionPlus::__set
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testMagicMethodsGetAndSetImplementationCorrect()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'key1' => 'value1',
             'key2' => 'value2',
             0 => 'value3'
         ));
 
         $this->assertInstanceOf(
-            'DCarbone\\CollectionPlus\\AbstractCollectionPlus',
+            'DCarbone\\AbstractCollectionPlus',
             $collection);
 
         $this->assertTrue(
@@ -172,41 +172,41 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__toString
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__toString
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\AbstractCollectionPlus $collection
+     * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testCollectionCanBeTypecastAsString(\DCarbone\CollectionPlus\AbstractCollectionPlus $collection)
+    public function testCollectionCanBeTypecastAsString(\DCarbone\AbstractCollectionPlus $collection)
     {
         $string = (string)$collection;
         $this->assertTrue(is_string($string));
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__toArray
+     * @covers \DCarbone\AbstractCollectionPlus::getArrayCopy
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\AbstractCollectionPlus $collection
+     * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testCanGetInternalStorageArrayOfCollection(\DCarbone\CollectionPlus\AbstractCollectionPlus $collection)
+    public function testCanGetInternalStorageArrayOfCollection(\DCarbone\AbstractCollectionPlus $collection)
     {
-        $array = $collection->__toArray();
+        $array = $collection->getArrayCopy();
         $this->assertTrue(is_array($array));
         $this->assertEquals(1, count($array));
         $this->assertArrayHasKey('test', $array);
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__toArray
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::jsonSerialize
+     * @covers \DCarbone\AbstractCollectionPlus::getArrayCopy
+     * @covers \DCarbone\AbstractCollectionPlus::jsonSerialize
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\AbstractCollectionPlus $collection
+     * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testCanGetJsonSerializedRepresentationOfCollectionData(\DCarbone\CollectionPlus\AbstractCollectionPlus $collection)
+    public function testCanGetJsonSerializedRepresentationOfCollectionData(\DCarbone\AbstractCollectionPlus $collection)
     {
         if (version_compare(PHP_VERSION, '5.4.0', 'lt'))
         {
-            $this->assertInstanceOf('\\DCarbone\\CollectionPlus\\JsonSerializable', $collection);
+            $this->assertInstanceOf('\\DCarbone\\JsonSerializable', $collection);
             $json = json_encode($collection->jsonSerialize());
         }
         else
@@ -225,12 +225,12 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::keys
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::keys
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\AbstractCollectionPlus $collection
+     * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testCanGetKeysOfCollection(\DCarbone\CollectionPlus\AbstractCollectionPlus $collection)
+    public function testCanGetKeysOfCollection(\DCarbone\AbstractCollectionPlus $collection)
     {
         $keys = $collection->keys();
         $this->assertTrue(is_array($keys), '"$collection->keys()" did not return an array!');
@@ -243,12 +243,12 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers  \DCarbone\CollectionPlus\AbstractCollectionPlus::array_keys
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers  \DCarbone\AbstractCollectionPlus::array_keys
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\AbstractCollectionPlus|\DCarbone\CollectionPlus\BaseCollectionPlus $collection
+     * @param \DCarbone\AbstractCollectionPlus|\DCarbone\CollectionPlus $collection
      */
-    public function testCanUseDeprecatedArrayKeysMethod(\DCarbone\CollectionPlus\BaseCollectionPlus $collection)
+    public function testCanUseDeprecatedArrayKeysMethod(\DCarbone\CollectionPlus $collection)
     {
         $keys = $collection->array_keys();
         $this->assertTrue(is_array($keys));
@@ -258,13 +258,13 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exchangeArray
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testCanUseExchangeArrayWithArrayParameter()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array('test' => 'value'));
+        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
 
         $this->assertTrue(
             method_exists($collection, 'exchangeArray'),
@@ -285,13 +285,13 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exchangeArray
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testCanUseExchangeArrayWithStdClassParameter()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array('test' => 'value'));
+        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
 
         $this->assertTrue(
             method_exists($collection, 'exchangeArray'),
@@ -312,20 +312,20 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exchangeArray
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__toArray
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @covers \DCarbone\AbstractCollectionPlus::getArrayCopy
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testCanUseExchangeArrayWithSelfParameter()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array('test' => 'value'));
+        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
 
         $this->assertTrue(
             method_exists($collection, 'exchangeArray'),
             '"$collection" object did not contain public method "exchangeArray"');
 
-        $newSelf = new \DCarbone\CollectionPlus\BaseCollectionPlus(array('new-key' => 'new-value'));
+        $newSelf = new \DCarbone\CollectionPlus(array('new-key' => 'new-value'));
 
         $oldArray = $collection->exchangeArray($newSelf);
         $this->assertTrue(
@@ -338,15 +338,15 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exchangeArray
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
      * @covers \ArrayObject::getArrayCopy
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @uses \DCarbone\AbstractCollectionPlus
      * @uses \ArrayObject
      */
     public function testCanUseExchangeArrayWithArrayObjectParameter()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array('test' => 'value'));
+        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
 
         $this->assertTrue(
             method_exists($collection, 'exchangeArray'),
@@ -365,14 +365,14 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exchangeArray
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @uses \DCarbone\AbstractCollectionPlus
      * @expectedException \InvalidArgumentException
      */
     public function testExceptionIsRaisedForInvalidExchangeArrayParameter()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array('test' => 'value'));
+        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
 
         $this->assertTrue(
             method_exists($collection, 'exchangeArray'),
@@ -384,13 +384,13 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::set
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::set
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testSetMethodImplementation()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
 
         $this->assertTrue(
             method_exists($collection, 'set'),
@@ -402,13 +402,13 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::append
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::append
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testAppendMethodImplementation()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
 
         $this->assertTrue(
             method_exists($collection, 'append'),
@@ -421,14 +421,14 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::contains
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::contains
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testSetMethodImplementation
      */
     public function testContainsMethodImplementation()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
 
         $this->assertTrue(
             method_exists($collection, 'contains'),
@@ -441,14 +441,14 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::indexOf
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::indexOf
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testSetMethodImplementation
      */
     public function testIndexOfMethodImplementation()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
 
         $this->assertTrue(
             method_exists($collection, 'indexOf'),
@@ -464,14 +464,14 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::remove
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::remove
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testSetMethodImplementation
      */
     public function testCanRemoveElementFromCollectionByIndex()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
 
         $collection->set('key1', 'value1');
 
@@ -484,14 +484,14 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::removeElement
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::removeElement
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testSetMethodImplementation
      */
     public function testCanRemoveElementFromCollectionByElement()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
 
         $value = array('value1');
         $collection->set('key1', $value);
@@ -504,41 +504,41 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::isEmpty
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::isEmpty
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testEmptyMethodWhenCollectionEmpty()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
 
         $this->assertTrue($collection->isEmpty());
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::isEmpty
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::isEmpty
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testEmptyMethodWhenCollectionNotEmpty()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array('test' => 'value'));
+        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
         $this->assertFalse($collection->isEmpty());
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::set
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::append
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::isEmpty
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::removeElement
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::set
+     * @covers \DCarbone\AbstractCollectionPlus::append
+     * @covers \DCarbone\AbstractCollectionPlus::first
+     * @covers \DCarbone\AbstractCollectionPlus::last
+     * @covers \DCarbone\AbstractCollectionPlus::isEmpty
+     * @covers \DCarbone\AbstractCollectionPlus::removeElement
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testCollectionFirstAndLastMethods()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
 
         $this->assertTrue(
             method_exists($collection,'first'),
@@ -573,17 +573,17 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::set
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::append
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::removeElement
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::set
+     * @covers \DCarbone\AbstractCollectionPlus::append
+     * @covers \DCarbone\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\AbstractCollectionPlus::getLastKey
+     * @covers \DCarbone\AbstractCollectionPlus::removeElement
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testCollectionFirstKeyAndLastKeyMethods()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
 
         $this->assertTrue(
             method_exists($collection,'getFirstKey'),
@@ -618,12 +618,12 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exists
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::exists
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\BaseCollectionPlus $collection
+     * @param \DCarbone\CollectionPlus $collection
      */
-    public function testExistsWithStringGlobalFunctionName(\DCarbone\CollectionPlus\BaseCollectionPlus $collection)
+    public function testExistsWithStringGlobalFunctionName(\DCarbone\CollectionPlus $collection)
     {
         $shouldExist = $collection->exists('_collection_exists_success_test');
         $shouldNotExist = $collection->exists('_collection_exists_failure_test');
@@ -633,13 +633,13 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exists
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::exists
+     * @uses \DCarbone\AbstractCollectionPlus
      * @uses \CollectionPlusTests
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\BaseCollectionPlus $collection
+     * @param \DCarbone\CollectionPlus $collection
      */
-    public function testExistsWithStringObjectStaticMethodName(\DCarbone\CollectionPlus\BaseCollectionPlus $collection)
+    public function testExistsWithStringObjectStaticMethodName(\DCarbone\CollectionPlus $collection)
     {
         $shouldExist = $collection->exists(array('\\CollectionPlusTests', '_collection_exists_success_test'));
         $shouldNotExist = $collection->exists(array('\\CollectionPlusTests', '_collection_exists_failure_test'));
@@ -649,12 +649,12 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::exists
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::exists
+     * @uses \DCarbone\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
-     * @param \DCarbone\CollectionPlus\BaseCollectionPlus $collection
+     * @param \DCarbone\CollectionPlus $collection
      */
-    public function testExistsWithAnonymousFunction(\DCarbone\CollectionPlus\BaseCollectionPlus $collection)
+    public function testExistsWithAnonymousFunction(\DCarbone\CollectionPlus $collection)
     {
         $shouldExist = $collection->exists(function($key, $value) {
             return ($key === 'test' && $value === 'value');
@@ -669,28 +669,28 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::setIteratorClass
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getIteratorClass
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::setIteratorClass
+     * @covers \DCarbone\AbstractCollectionPlus::getIteratorClass
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testCanSetValidIteratorClassWithLeadingSlashes()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         $collection->setIteratorClass('\\ArrayIterator');
         $this->assertTrue(
             ('\\ArrayIterator' === $collection->getIteratorClass()));
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::setIteratorClass
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getIteratorClass
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::setIteratorClass
+     * @covers \DCarbone\AbstractCollectionPlus::getIteratorClass
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testCanSetValidIteratorClassWithoutLeadingSlashes()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         $collection->setIteratorClass('ArrayIterator');
 
         $this->assertTrue(
@@ -698,26 +698,26 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::setIteratorClass
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::setIteratorClass
+     * @uses \DCarbone\AbstractCollectionPlus
      * @expectedException \InvalidArgumentException
      */
     public function testExceptionThrownWhenUndefinedIteratorClassSet()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         $collection->setIteratorClass('\\MyAwesomeIterator');
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getIterator
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::getIterator
+     * @uses \DCarbone\AbstractCollectionPlus
      * @uses \ArrayIterator
      */
     public function testCanGetDefaultIteratorClass()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(
+        $collection = new \DCarbone\CollectionPlus(
             array('key1' => 'value1', 'key2' => 'value2'));
 
         $arrayIterator = $collection->getIterator();
@@ -726,15 +726,15 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::setIteratorClass
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getIterator
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::setIteratorClass
+     * @covers \DCarbone\AbstractCollectionPlus::getIterator
+     * @uses \DCarbone\AbstractCollectionPlus
      * @uses \MySuperAwesomeIteratorClass
      */
     public function testCanGetCustomIteratorClass()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(
+        $collection = new \DCarbone\CollectionPlus(
             array('key1' => 'value1', 'key2' => 'value2'));
 
         $collection->setIteratorClass('\\MySuperAwesomeIteratorClass');
@@ -745,28 +745,28 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::map
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @uses \DCarbone\AbstractCollectionPlus
      * @expectedException \InvalidArgumentException
      */
     public function testMapThrowsExceptionWhenUncallableFuncPassed()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         $collection->map('this_function_doesnt_exist');
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::map
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::initNew
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testMapWithGlobalFunction()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         for($i = 0; $i < 10; $i++)
             $collection[] = $i;
 
@@ -780,17 +780,17 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::map
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::initNew
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      * @uses CollectionPlusTests
      */
     public function testMapWithObjectStaticMethod()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         for($i = 0; $i < 10; $i++)
             $collection[] = $i;
 
@@ -804,16 +804,16 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::map
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::initNew
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testMapWithAnonymousFunction()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         for($i = 0; $i < 10; $i++)
             $collection[] = $i;
 
@@ -830,12 +830,12 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::map
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::initNew
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      * @uses \MySuperAwesomeCollectionClass
      */
     public function testMapWithAnonymousFunctionReturnsInstanceOfExtendedClass()
@@ -860,16 +860,16 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::filter
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::filter
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::initNew
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testFilterWithNoCallableParameter()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         for($i = 1; $i <= 10; $i++)
         {
             if ($i % 2 === 0)
@@ -886,16 +886,16 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::filter
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::filter
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::initNew
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testFilterWithGlobalFunction()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         for($i = 1; $i <= 10; $i++)
         {
             if ($i % 2 === 0)
@@ -912,17 +912,17 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::filter
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::filter
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::initNew
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      * @uses \CollectionPlusTests
      */
     public function testFilterWithObjectStaticFunction()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         for($i = 1; $i <= 10; $i++)
         {
             if ($i % 2 === 0)
@@ -939,16 +939,16 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::filter
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::filter
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::initNew
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testFilterWithAnonymousFunction()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus();
+        $collection = new \DCarbone\CollectionPlus();
         for($i = 1; $i <= 10; $i++)
         {
             if ($i % 2 === 0)
@@ -968,12 +968,12 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::filter
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::initNew
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::count
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::filter
+     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers \DCarbone\AbstractCollectionPlus::initNew
+     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testFilterWithAnonymousFunctionReturnsInstanceOfExtendedClass()
     {
@@ -998,15 +998,15 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::sort
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::sort
+     * @covers \DCarbone\AbstractCollectionPlus::first
+     * @covers \DCarbone\AbstractCollectionPlus::last
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testSort()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'z', 'q', 'a', 'b',
         ));
 
@@ -1021,15 +1021,15 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::rsort
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::rsort
+     * @covers \DCarbone\AbstractCollectionPlus::first
+     * @covers \DCarbone\AbstractCollectionPlus::last
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testRSort()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'z', 'q', 'a', 'b',
         ));
 
@@ -1044,15 +1044,15 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::usort
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::usort
+     * @covers \DCarbone\AbstractCollectionPlus::first
+     * @covers \DCarbone\AbstractCollectionPlus::last
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testUSortWithAnonymousFunction()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'z', 'q', 'a', 'b',
         ));
 
@@ -1069,15 +1069,15 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::ksort
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::ksort
+     * @covers \DCarbone\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testKSort()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
@@ -1095,15 +1095,15 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::krsort
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::krsort
+     * @covers \DCarbone\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testKRSort()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
@@ -1121,15 +1121,15 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::uksort
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::uksort
+     * @covers \DCarbone\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testUKSort()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
@@ -1149,17 +1149,17 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::asort
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::asort
+     * @covers \DCarbone\AbstractCollectionPlus::first
+     * @covers \DCarbone\AbstractCollectionPlus::last
+     * @covers \DCarbone\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testASort()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
@@ -1184,17 +1184,17 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::arsort
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::arsort
+     * @covers \DCarbone\AbstractCollectionPlus::first
+     * @covers \DCarbone\AbstractCollectionPlus::last
+     * @covers \DCarbone\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testARSort()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
@@ -1219,17 +1219,17 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::uasort
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::first
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::last
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getFirstKey
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getLastKey
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::uasort
+     * @covers \DCarbone\AbstractCollectionPlus::first
+     * @covers \DCarbone\AbstractCollectionPlus::last
+     * @covers \DCarbone\AbstractCollectionPlus::getFirstKey
+     * @covers \DCarbone\AbstractCollectionPlus::getLastKey
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testUASort()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
@@ -1256,17 +1256,17 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::current
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::next
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::key
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::valid
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::rewind
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::current
+     * @covers \DCarbone\AbstractCollectionPlus::next
+     * @covers \DCarbone\AbstractCollectionPlus::key
+     * @covers \DCarbone\AbstractCollectionPlus::valid
+     * @covers \DCarbone\AbstractCollectionPlus::rewind
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testIteratorImplementation()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'key1' => 'value1',
             'key2' => 'value2',
             'key3' => 'value3'
@@ -1306,19 +1306,19 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::current
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::next
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::key
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::valid
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::rewind
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::hasChildren
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::getChildren
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::current
+     * @covers \DCarbone\AbstractCollectionPlus::next
+     * @covers \DCarbone\AbstractCollectionPlus::key
+     * @covers \DCarbone\AbstractCollectionPlus::valid
+     * @covers \DCarbone\AbstractCollectionPlus::rewind
+     * @covers \DCarbone\AbstractCollectionPlus::hasChildren
+     * @covers \DCarbone\AbstractCollectionPlus::getChildren
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testRecursiveIteratorImplementation()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'key1' => array('value1'),
             'key2' => 'value2',
             'key3' => array('value3'),
@@ -1358,18 +1358,18 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::seek
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::current
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::valid
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::key
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::next
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetGet
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::seek
+     * @covers \DCarbone\AbstractCollectionPlus::current
+     * @covers \DCarbone\AbstractCollectionPlus::valid
+     * @covers \DCarbone\AbstractCollectionPlus::key
+     * @covers \DCarbone\AbstractCollectionPlus::next
+     * @covers \DCarbone\AbstractCollectionPlus::offsetGet
+     * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testSeekableIteratorImplementationWithValidPosition()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'key1' => array('value1'),
             'key2' => 'value2',
             'key3' => array('value3'),
@@ -1393,19 +1393,19 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::seek
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::current
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::valid
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::key
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::next
-     * @covers \DCarbone\CollectionPlus\AbstractCollectionPlus::offsetGet
-     * @uses \DCarbone\CollectionPlus\AbstractCollectionPlus
+     * @covers \DCarbone\AbstractCollectionPlus::__construct
+     * @covers \DCarbone\AbstractCollectionPlus::seek
+     * @covers \DCarbone\AbstractCollectionPlus::current
+     * @covers \DCarbone\AbstractCollectionPlus::valid
+     * @covers \DCarbone\AbstractCollectionPlus::key
+     * @covers \DCarbone\AbstractCollectionPlus::next
+     * @covers \DCarbone\AbstractCollectionPlus::offsetGet
+     * @uses \DCarbone\AbstractCollectionPlus
      * @expectedException \OutOfBoundsException
      */
     public function testSeekableIteratorThrowExceptionWithInvalidPosition()
     {
-        $collection = new \DCarbone\CollectionPlus\BaseCollectionPlus(array(
+        $collection = new \DCarbone\CollectionPlus(array(
             'key1' => array('value1'),
             'key2' => 'value2',
             'key3' => array('value3'),

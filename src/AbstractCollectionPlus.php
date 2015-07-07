@@ -1,10 +1,10 @@
-<?php namespace DCarbone\CollectionPlus;
+<?php namespace DCarbone;
 
 /**
  * Class AbstractCollectionPlus
- * @package DCarbone\CollectionPlus
+ * @package DCarbone
  */
-abstract class AbstractCollectionPlus implements ICollectionPlus
+abstract class AbstractCollectionPlus implements CollectionPlusInterface
 {
     /** @var array */
     private $_storage = array();
@@ -13,6 +13,9 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     private $_firstKey = null;
     /** @var mixed */
     private $_lastKey = null;
+
+    /** @var bool */
+    private $_modified = true;
 
     /** @var string */
     protected $iteratorClass = '\ArrayIterator';
@@ -23,28 +26,15 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     public function __construct(array $data = array())
     {
         $this->_storage = $data;
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
     }
 
     /**
      * @param array $data
-     * @return \DCarbone\CollectionPlus\ICollectionPlus
+     * @return \DCarbone\CollectionPlusInterface
      */
     protected function initNew(array $data = array())
     {
         return new static($data);
-    }
-
-    /**
-     * @deprecated
-     * @return array
-     */
-    public function array_keys()
-    {
-        return $this->keys();
     }
 
     /**
@@ -53,6 +43,14 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     public function keys()
     {
         return array_keys($this->_storage);
+    }
+
+    /**
+     * @return array
+     */
+    public function values()
+    {
+        return array_values($this->_storage);
     }
 
     /**
@@ -66,11 +64,28 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     }
 
     /**
+     * @deprecated
+     * @return array
+     */
+    public function __toArray()
+    {
+        return $this->getArrayCopy();
+    }
+
+    /**
      * make this object an array!
      *
      * @return array
      */
-    public function __toArray()
+    public function getArrayCopy()
+    {
+        return $this->_storage;
+    }
+
+    /**
+     * @return array|mixed
+     */
+    public function jsonSerialize()
     {
         return $this->_storage;
     }
@@ -115,8 +130,6 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         // This method can accept multiple input types....
         if ($dataSet instanceof \stdClass)
             $dataSet = (array)$dataSet;
-        else if ($dataSet instanceof self)
-            $dataSet = $dataSet->__toArray();
         else if (is_object($dataSet) && is_callable(array($dataSet, 'getArrayCopy')))
             $dataSet = $dataSet->getArrayCopy();
 
@@ -134,30 +147,27 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         return $storage;
     }
 
-
     /**
      * Set a value on this collection
      *
      * @param mixed $key
      * @param mixed $value
-     * @return bool
+     * @return void
      */
     public function set($key, $value)
     {
         $this->offsetSet($key, $value);
-        return true;
     }
 
     /**
      * Append a value
      *
      * @param mixed $value
-     * @return bool
+     * @return void
      */
     public function append($value)
     {
         $this->offsetSet(null, $value);
-        return true;
     }
 
     /**
@@ -183,36 +193,23 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if (!is_callable($func, false, $callable_name))
             throw new \InvalidArgumentException(get_class($this).'::exists - Un-callable "$func" value seen!');
 
-        // Reset internal array pointer
-        reset($this->_storage);
-
         // If this is a method on an object (except for \Closure), parse and continue
         if (strpos($callable_name, '::') !== false && strpos($callable_name, 'Closure') === false)
         {
             $exp = explode('::', $callable_name);
-            while(($key = key($this->_storage)) !== null && ($value = current($this->_storage)) !== false)
+            foreach($this->_storage as $key=>$value)
             {
                 if ($exp[0]::$exp[1]($key, $value))
-                {
-                    reset($this->_storage);
                     return true;
-                }
-
-                next($this->_storage);
             }
         }
         // Else execute as normal
         else
         {
-            while(($key = key($this->_storage)) !== null && ($value = current($this->_storage)) !== false)
+            foreach($this->_storage as $key=>$value)
             {
                 if ($func($key, $value))
-                {
-                    reset($this->_storage);
                     return true;
-                }
-
-                next($this->_storage);
             }
         }
 
@@ -238,18 +235,15 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function remove($index)
     {
-        if (!isset($this->_storage[$index]) && !array_key_exists($index, $this->_storage))
-            return null;
+        if (isset($this->_storage[$index]) || !array_key_exists($index, $this->_storage))
+        {
+            $removed = $this->_storage[$index];
+            unset($this->_storage[$index]);
+            $this->_modified = true;
+            return $removed;
+        }
 
-        $removed = $this->_storage[$index];
-        unset($this->_storage[$index]);
-
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-
-        return $removed;
+        return null;
     }
 
     /**
@@ -264,11 +258,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
             return false;
 
         unset($this->_storage[$key]);
-
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
+        $this->_modified = true;
 
         return true;
     }
@@ -322,7 +312,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      *
      * @param callable $func
      * @throws \InvalidArgumentException
-     * @return \DCarbone\CollectionPlus\ICollectionPlus
+     * @return \DCarbone\CollectionPlusInterface
      */
     public function map($func)
     {
@@ -343,7 +333,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      *
      * @param callable $func
      * @throws \InvalidArgumentException
-     * @return \DCarbone\CollectionPlus\ICollectionPlus
+     * @return \DCarbone\CollectionPlusInterface
      */
     public function filter($func = null)
     {
@@ -376,6 +366,9 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if ($this->isEmpty())
             return null;
 
+        if ($this->_modified)
+            $this->_updateKeys();
+
         return $this->_storage[$this->_firstKey];
     }
 
@@ -389,6 +382,9 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if ($this->isEmpty())
             return null;
 
+        if ($this->_modified)
+            $this->_updateKeys();
+
         return $this->_storage[$this->_lastKey];
     }
 
@@ -397,6 +393,9 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function getFirstKey()
     {
+        if ($this->_modified)
+            $this->_updateKeys();
+
         return $this->_firstKey;
     }
 
@@ -405,6 +404,9 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function getLastKey()
     {
+        if ($this->_modified)
+            $this->_updateKeys();
+
         return $this->_lastKey;
     }
 
@@ -418,12 +420,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function sort($flags = SORT_REGULAR)
     {
-        $sort = sort($this->_storage, $flags);
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-        return $sort;
+        $this->_modified = true;
+        return sort($this->_storage, $flags);
     }
 
     /**
@@ -436,12 +434,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function rsort($flags = SORT_REGULAR)
     {
-        $sort = rsort($this->_storage, $flags);
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-        return $sort;
+        $this->_modified = true;
+        return rsort($this->_storage, $flags);
     }
 
     /**
@@ -454,12 +448,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function usort($func)
     {
-        $sort = usort($this->_storage, $func);
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-        return $sort;
+        $this->_modified = true;
+        return usort($this->_storage, $func);
     }
 
     /**
@@ -472,12 +462,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function ksort($flags = SORT_REGULAR)
     {
-        $sort = ksort($this->_storage, $flags);
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-        return $sort;
+        $this->_modified = true;
+        return ksort($this->_storage, $flags);
     }
 
     /**
@@ -490,12 +476,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function krsort($flags = SORT_REGULAR)
     {
-        $sort = krsort($this->_storage, $flags);
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-        return $sort;
+        $this->_modified = true;
+        return krsort($this->_storage, $flags);
     }
 
     /**
@@ -508,12 +490,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function uksort($func)
     {
-        $sort = uksort($this->_storage, $func);
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-        return $sort;
+        $this->_modified = true;
+        return uksort($this->_storage, $func);
     }
 
     /**
@@ -526,12 +504,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function asort($flags = SORT_REGULAR)
     {
-        $sort = asort($this->_storage, $flags);
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-        return $sort;
+        $this->_modified = true;
+        return asort($this->_storage, $flags);
     }
 
     /**
@@ -544,12 +518,8 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function arsort($flags = SORT_REGULAR)
     {
-        $sort = arsort($this->_storage, $flags);
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-        return $sort;
+        $this->_modified = true;
+        return arsort($this->_storage, $flags);
     }
 
     /**
@@ -562,17 +532,14 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
      */
     public function uasort($func)
     {
-        $sort = uasort($this->_storage, $func);
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-        return $sort;
+        $this->_modified = true;
+        return uasort($this->_storage, $func);
     }
 
     /**
      * (PHP 5 >= 5.0.0)
      * Return the current element
+     * @internal
      * @link http://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
      */
@@ -584,6 +551,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     /**
      * (PHP 5 >= 5.0.0)
      * Move forward to next element
+     * @internal
      * @link http://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
      */
@@ -595,6 +563,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     /**
      * (PHP 5 >= 5.0.0)
      * Return the key of the current element
+     * @internal
      * @link http://php.net/manual/en/iterator.key.php
      * @return mixed scalar on success, or null on failure.
      */
@@ -606,18 +575,20 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     /**
      * (PHP 5 >= 5.0.0)
      * Checks if current position is valid
+     * @internal
      * @link http://php.net/manual/en/iterator.valid.php
      * @return boolean The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
     public function valid()
     {
-        return (key($this->_storage) !== null && current($this->_storage) !== false);
+        return !(null === key($this->_storage) && false === current($this->_storage));
     }
 
     /**
      * (PHP 5 >= 5.0.0)
      * Rewind the Iterator to the first element
+     * @internal
      * @link http://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
      */
@@ -629,6 +600,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     /**
      * (PHP 5 >= 5.1.0)
      * Returns if an iterator can be created for the current entry.
+     * @internal
      * @link http://php.net/manual/en/recursiveiterator.haschildren.php
      * @return bool true if the current entry can be iterated over, otherwise returns false.
      */
@@ -640,6 +612,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     /**
      * (PHP 5 >= 5.1.0)
      * Returns an iterator for the current entry.
+     * @internal
      * @link http://php.net/manual/en/recursiveiterator.getchildren.php
      * @return \RecursiveIterator An iterator for the current entry.
      */
@@ -651,29 +624,33 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     /**
      * (PHP 5 >= 5.1.0)
      * Seeks to a position
+     * @internal
      * @link http://php.net/manual/en/seekableiterator.seek.php
      * @param mixed $position The position to seek to.
-     * 
      * @throws \OutOfBoundsException
      * @return void
      */
     public function seek($position)
     {
-        if (!isset($this->_storage[$position]) && !array_key_exists($position, $this->_storage))
-            throw new \OutOfBoundsException('Invalid seek position ('.$position.')');
-
-        while (key($this->_storage) !== $position)
+        if (isset($this->_storage[$position]) || array_key_exists($position, $this->_storage))
         {
-            next($this->_storage);
+            while (key($this->_storage) !== $position)
+            {
+                next($this->_storage);
+            }
+        }
+        else
+        {
+            throw new \OutOfBoundsException('Invalid seek position ('.$position.')');
         }
     }
 
     /**
      * (PHP 5 >= 5.0.0)
      * Whether a offset exists
+     * @internal
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
      * @param mixed $offset An offset to check for.
-     * 
      * @return boolean true on success or false on failure.
      * 
      * The return value will be casted to boolean if non-boolean was returned.
@@ -686,6 +663,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     /**
      * (PHP 5 >= 5.0.0)
      * Offset to retrieve
+     * @internal
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset The offset to retrieve.
      * 
@@ -696,57 +674,52 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
         if (isset($this->_storage[$offset]) || array_key_exists($offset, $this->_storage))
             return $this->_storage[$offset];
 
+        trigger_error(vsprintf(
+            '%s::offsetGet - Requested offset "%s" does not exist in this collection.',
+            array(get_class($this), $offset)
+        ));
+
         return null;
     }
 
     /**
      * (PHP 5 >= 5.0.0)
      * Offset to set
+     * @internal
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
      * @param mixed $offset The offset to assign the value to.
-     * 
      * @param mixed $value The value to set.
-     * 
      * @return void
      */
     public function offsetSet($offset, $value)
     {
+        $this->_modified = true;
+
         if ($offset === null)
             $this->_storage[] = $value;
         else
             $this->_storage[$offset] = $value;
-
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
     }
 
     /**
      * (PHP 5 >= 5.0.0)
      * Offset to unset
+     * @internal
      * @link http://php.net/manual/en/arrayaccess.offsetunset.php
      * @param mixed $offset The offset to unset.
-     * 
-     * @throws \OutOfBoundsException
      * @return void
      */
     public function offsetUnset($offset)
     {
+        $this->_modified = true;
         if (isset($this->_storage[$offset]) || array_key_exists($offset, $this->_storage))
             unset($this->_storage[$offset]);
-        else
-            throw new \OutOfBoundsException('Tried to unset undefined offset ('.$offset.')');
-
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
     }
 
     /**
      * (PHP 5 >= 5.1.0)
      * Count elements of an object
+     * @internal
      * @link http://php.net/manual/en/countable.count.php
      * @return int The custom count as an integer.
      * 
@@ -760,6 +733,7 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     /**
      * (PHP 5 >= 5.1.0)
      * String representation of object
+     * @internal
      * @link http://php.net/manual/en/serializable.serialize.php
      * @return string the string representation of the object or null
      */
@@ -771,26 +745,27 @@ abstract class AbstractCollectionPlus implements ICollectionPlus
     /**
      * (PHP 5 >= 5.1.0)
      * Constructs the object
+     * @internal
      * @link http://php.net/manual/en/serializable.unserialize.php
      * @param string $serialized The string representation of the object.
-     * 
      * @return void
      */
     public function unserialize($serialized)
     {
         $this->_storage = unserialize($serialized);
+        $this->_modified = true;
+    }
 
+    /**
+     * Update internal references to first and last keys in collection
+     */
+    private function _updateKeys()
+    {
         end($this->_storage);
         $this->_lastKey = key($this->_storage);
         reset($this->_storage);
         $this->_firstKey = key($this->_storage);
-    }
 
-    /**
-     * @return array|mixed
-     */
-    public function jsonSerialize()
-    {
-        return $this->_storage;
+        $this->_modified = false;
     }
 }

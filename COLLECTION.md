@@ -77,7 +77,7 @@ array(3) {
 
 ## Available Methods:
 
-[Click here](src/ICollectionPlus.php) to have a look at what public methods are available on this class.
+[Click here](src/CollectionPlusInterface.php) to have a look at what public methods are available on this class.
 
 ## Some Usage Guidelines
 
@@ -106,7 +106,7 @@ array (
 However, if you try to do this with a class implementing ``` \ArrayAccess ```, you'll see the following message:
 
 ```php
-$class = new \DCarbone\CollectionPlus\BaseCollectionPlus(
+$class = new \DCarbone\CollectionPlus\CollectionPlus(
     array(
         'sub-array' => array('value1'),
     )
@@ -115,7 +115,7 @@ $class = new \DCarbone\CollectionPlus\BaseCollectionPlus(
 $class['sub-array'][] = 'value2';
 
 // Produces E_NOTICE:
-// Notice: Indirect modification of overloaded element of DCarbone\CollectionPlus\BaseCollectionPlus has no effect
+// Notice: Indirect modification of overloaded element of DCarbone\CollectionPlus\CollectionPlus has no effect
 ```
 
 There are a few ways around this.

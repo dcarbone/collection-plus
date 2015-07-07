@@ -11,7 +11,7 @@ As stated above, this class _extends_ the base ``` SplFixedArray ``` class, and 
 
 ## Extension
 
-[Click here](src/IFixedCollection.php) to see what methods I have added to the base class
+[Click here](src/FixedCollectionInterface.php) to see what methods I have added to the base class
 
 The usage of this class requires a certain level of understanding about how the base [SplFixedArray](http://php.net/manual/en/class.splfixedarray.php) functions.
 

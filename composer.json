@@ -8,10 +8,7 @@
         "Collection",
         "collection",
         "ArrayObject",
-        "arrayobject",
-        "SplFixedArray",
-        "splfixedarray",
-        "fixedarray"
+        "arrayobject"
     ],
     "homepage": "https://github.com/dcarbone/collection-plus",
     "license": "GPLv3",
@@ -33,7 +30,7 @@
 
     "autoload" : {
         "psr-4" : {
-            "DCarbone\\CollectionPlus\\" : "src/"
+            "DCarbone\\" : "src/"
         }
     }
 }

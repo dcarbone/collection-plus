@@ -1,10 +1,10 @@
-<?php namespace DCarbone\CollectionPlus;
+<?php namespace DCarbone;
 
 /**
- * Interface ICollectionPlus
- * @package DCarbone\CollectionPlus
+ * Interface CollectionPlusInterface
+ * @package DCarbone
  */
-interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableIterator, \ArrayAccess, \Serializable, \DCarbone\CollectionPlus\JsonSerializable
+interface CollectionPlusInterface extends \Countable, \RecursiveIterator, \SeekableIterator, \ArrayAccess, \Serializable, \DCarbone\JsonSerializable
 {
     /**
      * @return string
@@ -14,7 +14,7 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
     /**
      * @return array
      */
-    public function __toArray();
+    public function getArrayCopy();
 
     /**
      * @param mixed $param
@@ -33,6 +33,11 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
      * @return array
      */
     public function keys();
+
+    /**
+     * @return array
+     */
+    public function values();
 
     /**
      * Get an Iterator instance for this data set
@@ -57,7 +62,7 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
      *
      * @param mixed $key
      * @param mixed $value
-     * @return bool
+     * @return void
      */
     public function set($key, $value);
 
@@ -65,7 +70,7 @@ interface ICollectionPlus extends \Countable, \RecursiveIterator, \SeekableItera
      * Append a value
      *
      * @param mixed $value
-     * @return bool
+     * @return void
      */
     public function append($value);
 

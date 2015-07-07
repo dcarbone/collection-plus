@@ -1,4 +1,4 @@
-<?php namespace DCarbone\CollectionPlus;
+<?php namespace DCarbone;
 
 if (interface_exists('JsonSerializable'))
 {
