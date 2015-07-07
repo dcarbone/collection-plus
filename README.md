@@ -14,7 +14,7 @@ of others while adding my own flair.
 
 ```json
 "require" : {
-    "dcarbone/collection-plus" : "2.1.*"
+    "dcarbone/collection-plus" : "3.0.*"
 }
 ```
 
@@ -26,7 +26,6 @@ of others while adding my own flair.
 
 ## Available Classes:
 - [AbstractCollectionPlus](COLLECTION.md)
-- [AbstractFixedCollectionPlus](FIXEDCOLLECTION.md)
 
 ## Comments / Suggestions / Criticisms
 
