@@ -97,15 +97,13 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
      */
     public function &__get($param)
     {
-        if (!$this->offsetExists($param))
-        {
-            throw new \OutOfBoundsException(vsprintf(
-                    '%s - Key "%s" does not exist in this collection.',
-                    array(get_class($this), $param))
-            );
-        }
+        if ($this->offsetExists($param))
+            return $this->_storage[$param];
 
-        return $this->_storage[$param];
+        throw new \OutOfBoundsException(vsprintf(
+                '%s - Key "%s" does not exist in this collection.',
+                array(get_class($this), $param))
+        );
     }
 
     /**
@@ -268,7 +266,7 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
     }
 
     /**
-     * @param $element
+     * @param mixed $element
      * @return bool
      */
     public function removeElement($element)
@@ -313,9 +311,9 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
     public function setIteratorClass($class)
     {
         if (strpos($class, '\\') !== 0)
-            $class = '\\' . $class;
+            $class = sprintf('%s%s', '\\', $class);
 
-        if (class_exists($class))
+        if (class_exists($class, true))
         {
             $this->iteratorClass = $class;
             return;
@@ -337,10 +335,13 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
      */
     public function map($func)
     {
-        if (!is_callable($func, false))
-            throw new \InvalidArgumentException(get_class($this).'::map - Un-callable "$func" value seen!');
+        if (is_callable($func, false))
+            return $this->initNew(array_map($func, $this->_storage));
 
-        return $this->initNew(array_map($func, $this->_storage));
+        throw new \InvalidArgumentException(vsprintf(
+            '%s::map - Un-callable "$func" value seen!',
+            array(get_class($this)))
+        );
     }
 
     /**
@@ -358,13 +359,16 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
      */
     public function filter($func = null)
     {
-        if ($func !== null && !is_callable($func, false))
-            throw new \InvalidArgumentException(get_class($this).'::filter - Un-callable "$func" value seen!');
-
-        if ($func === null)
+        if (null === $func)
             return $this->initNew(array_filter($this->_storage));
 
-        return $this->initNew(array_filter($this->_storage, $func));
+        if (is_callable($func, false))
+            return $this->initNew(array_filter($this->_storage, $func));
+
+        throw new \InvalidArgumentException(vsprintf(
+            '%s::filter - Un-callable "$func" value seen!',
+            array(get_class($this)))
+        );
     }
 
     /**
@@ -698,7 +702,7 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
         trigger_error(vsprintf(
             '%s::offsetGet - Requested offset "%s" does not exist in this collection.',
             array(get_class($this), $offset)
-        ));
+        ), E_NOTICE);
 
         return null;
     }

@@ -47,12 +47,6 @@ class CollectionPlusTests
     }
 }
 
-/**
- * Class MySuperAwesomeIteratorClass
- */
 class MySuperAwesomeIteratorClass extends \ArrayIterator { }
-
-/**
- * Class MySuperAwesomeCollectionClass
- */
 class MySuperAwesomeCollectionClass extends \DCarbone\CollectionPlus { }
+class im_just_a_class {}

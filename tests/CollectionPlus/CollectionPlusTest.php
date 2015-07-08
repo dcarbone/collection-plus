@@ -154,6 +154,16 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \DCarbone\AbstractCollectionPlus::__get
+     * @expectedException \OutOfBoundsException
+     */
+    public function testExceptionThrownWhenInvalidParameterSentTo__getMethod()
+    {
+        $collection = new \DCarbone\CollectionPlus();
+        $collection->key;
+    }
+
+    /**
      * @covers \DCarbone\AbstractCollectionPlus::__toString
      * @uses \DCarbone\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
@@ -321,10 +331,7 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::__construct
      * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
-     * @covers \ArrayObject::getArrayCopy
-     * @uses \DCarbone\AbstractCollectionPlus
      * @uses \ArrayObject
      */
     public function testCanUseExchangeArrayWithArrayObjectParameter()
@@ -348,12 +355,25 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::__construct
      * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
-     * @uses \DCarbone\AbstractCollectionPlus
+     * @uses \SplFixedArray
+     */
+    public function testCanUseExchangeArrayWithSplFixedArray()
+    {
+        $collection = new \DCarbone\CollectionPlus();
+        $fixedArray = new \SplFixedArray(1);
+        $fixedArray[0] = 'test';
+
+        $collection->exchangeArray($fixedArray);
+        $this->assertCount(1, $collection);
+        $this->assertContains('test', $collection);
+    }
+
+    /**
+     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
      * @expectedException \InvalidArgumentException
      */
-    public function testExceptionIsRaisedForInvalidExchangeArrayParameter()
+    public function testExceptionIsRaisedWhenNonArrayOrObjectPassedToExchangeArray()
     {
         $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
 
@@ -364,6 +384,17 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
         $newData = 42;
 
         $collection->exchangeArray($newData);
+    }
+
+    /**
+     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @expectedException \InvalidArgumentException
+     */
+    public function testExceptionThrownWhenInvalidObjectPassedToExchangeArray()
+    {
+        $collection = new \DCarbone\CollectionPlus();
+        $class = new im_just_a_class();
+        $collection->exchangeArray($class);
     }
 
     /**
@@ -481,6 +512,17 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \DCarbone\AbstractCollectionPlus::remove
+     */
+    public function testNullReturnedWhenRemovingInvalidIndex()
+    {
+        $collection = new \DCarbone\CollectionPlus(array('value'));
+        $this->assertCount(1, $collection);
+        $value = $collection->remove(1);
+        $this->assertNull($value);
+    }
+
+    /**
      * @covers \DCarbone\AbstractCollectionPlus::__construct
      * @covers \DCarbone\AbstractCollectionPlus::removeElement
      * @uses \DCarbone\AbstractCollectionPlus
@@ -501,7 +543,6 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::__construct
      * @covers \DCarbone\AbstractCollectionPlus::isEmpty
      * @uses \DCarbone\AbstractCollectionPlus
      */
@@ -524,13 +565,9 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\AbstractCollectionPlus::set
-     * @covers \DCarbone\AbstractCollectionPlus::append
      * @covers \DCarbone\AbstractCollectionPlus::first
      * @covers \DCarbone\AbstractCollectionPlus::last
-     * @covers \DCarbone\AbstractCollectionPlus::isEmpty
-     * @covers \DCarbone\AbstractCollectionPlus::removeElement
+     * @covers \DCarbone\AbstractCollectionPlus::_updateKeys
      * @uses \DCarbone\AbstractCollectionPlus
      */
     public function testCollectionFirstAndLastMethods()
@@ -995,6 +1032,16 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \DCarbone\AbstractCollectionPlus::filter
+     * @expectedException \InvalidArgumentException
+     */
+    public function testExceptionThrownWhenUnCallableFunctionPassedToFilter()
+    {
+        $collection = new \DCarbone\CollectionPlus(array(false, null, true));
+        $collection->filter('haha, i\'m not a function!');
+    }
+
+    /**
      * @covers \DCarbone\AbstractCollectionPlus::__construct
      * @covers \DCarbone\AbstractCollectionPlus::sort
      * @covers \DCarbone\AbstractCollectionPlus::first
@@ -1390,14 +1437,7 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::__construct
      * @covers \DCarbone\AbstractCollectionPlus::seek
-     * @covers \DCarbone\AbstractCollectionPlus::current
-     * @covers \DCarbone\AbstractCollectionPlus::valid
-     * @covers \DCarbone\AbstractCollectionPlus::key
-     * @covers \DCarbone\AbstractCollectionPlus::next
-     * @covers \DCarbone\AbstractCollectionPlus::offsetGet
-     * @uses \DCarbone\AbstractCollectionPlus
      * @expectedException \OutOfBoundsException
      */
     public function testSeekableIteratorThrowExceptionWithInvalidPosition()
@@ -1417,5 +1457,37 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($collection['key1'] === array('value1'));
 
         $collection->seek('sandwiches');
+    }
+
+    /**
+     * @covers \DCarbone\AbstractCollectionPlus::values
+     */
+    public function testCanGetValuesAsArray()
+    {
+        $collection = new \DCarbone\CollectionPlus(array(
+            'key1' => array('value1'),
+            'key2' => 'value2',
+            'key3' => array('value3'),
+            'value4',
+        ));
+
+        $values = $collection->values();
+        $this->assertInternalType('array', $values);
+        $this->assertCount(4, $collection);
+        $this->assertContains(array('value1'), $values);
+        $this->assertContains('value2', $values);
+        $this->assertContains(array('value3'), $values);
+        $this->assertContains('value4', $values);
+    }
+
+    /**
+     * @covers \DCarbone\AbstractCollectionPlus::values
+     */
+    public function testCanGetEmptyValuesArrayFromEmptyCollection()
+    {
+        $collection = new \DCarbone\CollectionPlus();
+        $values = $collection->values();
+        $this->assertInternalType('array', $values);
+        $this->assertCount(0, $values);
     }
 }
