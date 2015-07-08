@@ -2,8 +2,8 @@
 
 date_default_timezone_set('UTC');
 
-require_once realpath(dirname(__DIR__).'/misc/functions.php');
-require_once realpath(dirname(__DIR__).'/misc/classes.php');
+require_once __DIR__.'/../misc/functions.php';
+require_once __DIR__.'/../misc/classes.php';
 
 /**
  * Class CollectionPlusTest
@@ -90,7 +90,6 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
 
         // First, falsy tests
         $this->assertFalse(isset($collection['sandwich']));
-        $this->assertNull($collection['sandwich']);
 
         // Next, truthy tests
         $this->assertTrue(isset($collection['key1']));
@@ -113,23 +112,6 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
 
         $this->assertArrayHasKey(2, $collection);
         $this->assertEquals('value4', $collection[2]);
-    }
-
-    /**
-     * @covers \DCarbone\AbstractCollectionPlus::__construct
-     * @covers \DCarbone\AbstractCollectionPlus::offsetUnset
-     * @uses \DCarbone\AbstractCollectionPlus
-     * @expectedException \OutOfBoundsException
-     */
-    public function testExceptionThrownWhenInvalidOffsetUnset()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
-            'key1' => 'value1',
-            'key2' => 'value2',
-            0 => 'value3'
-        ));
-
-        unset($collection['sandwiches']);
     }
 
     /**
@@ -243,18 +225,19 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers  \DCarbone\AbstractCollectionPlus::array_keys
+     * @covers  \DCarbone\AbstractCollectionPlus::__toArray
      * @uses \DCarbone\AbstractCollectionPlus
      * @depends testCollectionCanBeConstructedFromValidConstructorArguments
      * @param \DCarbone\AbstractCollectionPlus|\DCarbone\CollectionPlus $collection
      */
-    public function testCanUseDeprecatedArrayKeysMethod(\DCarbone\CollectionPlus $collection)
+    public function testCanUseDeprecatedMethod__toArray(\DCarbone\CollectionPlus $collection)
     {
-        $keys = $collection->array_keys();
-        $this->assertTrue(is_array($keys));
-        $this->assertEquals(1, count($keys));
+        $array = $collection->__toArray();
+        $this->assertTrue(is_array($array));
+        $this->assertEquals(1, count($array));
 
-        $this->assertContains('test', $keys);
+        $this->assertArrayHasKey('test', $array);
+        $this->assertContains('value', $array);
     }
 
     /**

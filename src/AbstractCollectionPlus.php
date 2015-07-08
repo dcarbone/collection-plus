@@ -93,12 +93,17 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
     /**
      * @param mixed $param
      * @return mixed
-     * @throws \OutOfRangeException
+     * @throws \OutOfBoundsException
      */
     public function &__get($param)
     {
         if (!$this->offsetExists($param))
-            throw new \OutOfRangeException(get_class($this).' - No data element with the key "'.$param.'" found');
+        {
+            throw new \OutOfBoundsException(vsprintf(
+                    '%s - Key "%s" does not exist in this collection.',
+                    array(get_class($this), $param))
+            );
+        }
 
         return $this->_storage[$param];
     }
@@ -124,27 +129,40 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
      */
     public function exchangeArray($dataSet)
     {
-        if (!is_array($dataSet) && !is_object($dataSet))
-            throw new \InvalidArgumentException(get_class($this).'::exchangeArray - "$dataSet" parameter expected to be array or object');
+        if (is_object($dataSet))
+        {
+            switch(true)
+            {
+                case is_callable(array($dataSet, 'getArrayCopy')):
+                    $dataSet = $dataSet->getArrayCopy();
+                    break;
+                case is_callable(array($dataSet, '__toArray')):
+                    $dataSet = $dataSet->__toArray();
+                    break;
+                case ($dataSet instanceof \stdClass):
+                    $dataSet = (array)$dataSet;
+                    break;
 
-        // This method can accept multiple input types....
-        if ($dataSet instanceof \stdClass)
-            $dataSet = (array)$dataSet;
-        else if (is_object($dataSet) && is_callable(array($dataSet, 'getArrayCopy')))
-            $dataSet = $dataSet->getArrayCopy();
+                default:
+                    throw new \InvalidArgumentException(vsprintf(
+                        '%s - Unable to exchange data with object of class "%s".',
+                        array(get_class($this), get_class($dataSet)))
+                    );
+            }
+        }
 
-        if (!is_array($dataSet))
-            throw new \InvalidArgumentException(get_class($this).'::exchangeArray - Could not convert "$dataSet" value of type "'.gettype($dataSet).'" to an array!');
+        if (is_array($dataSet))
+        {
+            $prevStorage = $this->_storage;
+            $this->_storage = $dataSet;
+            $this->_modified = true;
+            return $prevStorage;
+        }
 
-        $storage = $this->_storage;
-        $this->_storage = $dataSet;
-
-        end($this->_storage);
-        $this->_lastKey = key($this->_storage);
-        reset($this->_storage);
-        $this->_firstKey = key($this->_storage);
-
-        return $storage;
+        throw new \InvalidArgumentException(vsprintf(
+            '%s::exchangeArray expects parameter 1 to be array or object, "%s" seen.',
+            array(get_class($this), gettype($dataSet))
+        ));
     }
 
     /**

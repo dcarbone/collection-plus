@@ -11,6 +11,8 @@
 ### Minor Changes
 - "set" and "append" methods no longer return any value
 - Refactoring some of my dumber code.
+- "__get" now throws OutOfBoundsException rather than OutOfRangeException
+- Exception no longer thrown when unsetting invalid key, just does nothing.
 
 ### Additions
 - Adding "values" method, which returns an array with integer keys containing all values in collection

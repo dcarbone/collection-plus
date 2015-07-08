@@ -18,6 +18,7 @@ interface CollectionPlusInterface extends \Countable, \RecursiveIterator, \Seeka
 
     /**
      * @param mixed $param
+     * @throws \OutOfBoundsException
      * @return mixed
      */
     public function &__get($param);

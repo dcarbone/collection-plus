@@ -3,16 +3,16 @@
 if (interface_exists('JsonSerializable'))
 {
     /**
-     * Class JsonSerializable
-     * @package DCarbone\Helpers
+     * Interface JsonSerializable
+     * @package DCarbone
      */
     interface JsonSerializable extends \JsonSerializable {}
 }
 else
 {
     /**
-     * Class JsonSerializable
-     * @package DCarbone\Helpers
+     * Interface JsonSerializable
+     * @package DCarbone
      */
     interface JsonSerializable
     {
