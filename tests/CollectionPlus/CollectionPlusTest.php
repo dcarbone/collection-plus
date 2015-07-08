@@ -467,6 +467,20 @@ class CollectionPlusTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \DCarbone\AbstractCollectionPlus::remove
+     */
+    public function testCanRemoveNullValueFromCollectionByIndex()
+    {
+        $collection = new \DCarbone\CollectionPlus(array(null));
+        $this->assertCount(1, $collection);
+        $this->assertContains(null, $collection);
+
+        $removed = $collection->remove(0);
+        $this->assertEquals(null, $removed);
+        $this->assertCount(0, $collection);
+    }
+
+    /**
      * @covers \DCarbone\AbstractCollectionPlus::__construct
      * @covers \DCarbone\AbstractCollectionPlus::removeElement
      * @uses \DCarbone\AbstractCollectionPlus

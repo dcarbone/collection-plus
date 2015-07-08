@@ -136,6 +136,9 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
                 case is_callable(array($dataSet, 'getArrayCopy')):
                     $dataSet = $dataSet->getArrayCopy();
                     break;
+                case is_callable(array($dataSet, 'toArray')):
+                    $dataSet = $dataSet->toArray();
+                    break;
                 case is_callable(array($dataSet, '__toArray')):
                     $dataSet = $dataSet->__toArray();
                     break;
@@ -253,11 +256,11 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
      */
     public function remove($index)
     {
-        if (isset($this->_storage[$index]) || !array_key_exists($index, $this->_storage))
+        if (isset($this->_storage[$index]) || array_key_exists($index, $this->_storage))
         {
+            $this->_modified = true;
             $removed = $this->_storage[$index];
             unset($this->_storage[$index]);
-            $this->_modified = true;
             return $removed;
         }
 
