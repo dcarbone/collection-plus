@@ -7,7 +7,7 @@
  */
 function _collection_exists_success_test($key, $value)
 {
-    return ($key === 'test' && $value === 'value');
+    return ($key === 3 && $value === 4);
 }
 
 /**

@@ -12,7 +12,7 @@ class CollectionPlusTests
      */
     public static function _collection_exists_success_test($key, $value)
     {
-        return ($key === 'test' && $value === 'value');
+        return ($key === 3 && $value === 4);
     }
 
     /**
@@ -48,5 +48,5 @@ class CollectionPlusTests
 }
 
 class MySuperAwesomeIteratorClass extends \ArrayIterator { }
-class MySuperAwesomeCollectionClass extends \DCarbone\CollectionPlus { }
+class MySuperAwesomeCollectionClass extends \DCarbone\AbstractCollectionPlus { }
 class im_just_a_class {}

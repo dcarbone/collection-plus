@@ -7,26 +7,15 @@
 interface CollectionPlusInterface extends \Countable, \RecursiveIterator, \SeekableIterator, \ArrayAccess, \Serializable, \DCarbone\JsonSerializable
 {
     /**
-     * @return string
-     */
-    public function __toString();
-
-    /**
-     * @return array
-     */
-    public function getArrayCopy();
-
-    /**
-     * @param mixed $param
-     * @throws \OutOfBoundsException
-     * @return mixed
-     */
-    public function &__get($param);
-
-    /**
      * @param mixed $name
+     * @return mixed
+     * @throws \OutOfBoundsException
+     */
+    public function &__get($name);
+
+    /**
+     * @param string|int $name
      * @param mixed $value
-     * @return void
      */
     public function __set($name, $value);
 
@@ -39,6 +28,60 @@ interface CollectionPlusInterface extends \Countable, \RecursiveIterator, \Seeka
      * @return array
      */
     public function values();
+
+    /**
+     * Executes array_search on internal storage array.
+     *
+     * Please refer to PHP docs for usage information.
+     * @link http://php.net/manual/en/function.array-search.php
+     *
+     * @param mixed $value
+     * @param bool $strict
+     * @return mixed
+     */
+    public function search($value, $strict = false);
+
+    /**
+     * Moves internal storage array pointer to last index and returns value
+     *
+     * @return mixed
+     */
+    public function end();
+
+    /**
+     * @return mixed
+     */
+    public function firstValue();
+
+    /**
+     * @return mixed
+     */
+    public function lastValue();
+
+    /**
+     * @return int|null|string
+     */
+    public function firstKey();
+
+    /**
+     * @return int|null|string
+     */
+    public function lastKey();
+
+    /**
+     * @return bool
+     */
+    public function isEmpty();
+
+    /**
+     * @return array
+     */
+    public function getArrayCopy();
+
+    /**
+     * @return string
+     */
+    public function __toString();
 
     /**
      * Get an Iterator instance for this data set
@@ -92,14 +135,6 @@ interface CollectionPlusInterface extends \Countable, \RecursiveIterator, \Seeka
     public function exists($func);
 
     /**
-     * Return index of desired key
-     *
-     * @param mixed $value
-     * @return mixed
-     */
-    public function indexOf($value);
-
-    /**
      * Remove and return an element
      *
      * @param $index
@@ -149,37 +184,6 @@ interface CollectionPlusInterface extends \Countable, \RecursiveIterator, \Seeka
      * @return static
      */
     public function filter($func = null);
-
-    /**
-     * Is this collection empty?
-     *
-     * @return bool
-     */
-    public function isEmpty();
-
-    /**
-     * Return the first item in the dataset
-     *
-     * @return mixed
-     */
-    public function first();
-
-    /**
-     * Return the last element in the dataset
-     *
-     * @return mixed
-     */
-    public function last();
-
-    /**
-     * @return mixed|null
-     */
-    public function getFirstKey();
-
-    /**
-     * @return mixed|null
-     */
-    public function getLastKey();
 
     /**
      * Sort values by standard PHP sort method

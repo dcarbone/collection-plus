@@ -1,4 +1,4 @@
-# CollectionPlus
+# AbstractCollectionPlus
 
 This class most closely resembles a typical PHP "Collection" class.
 
@@ -17,7 +17,7 @@ The following interfaces are implemented in this collection class:
 
 ```php
 
-use DCarbone\CollectionPlus\AbstractCollectionPlus;
+use DCarbone\AbstractCollectionPlus;
 
 class Parent extends AbstractCollectionPlus {}
 class Child extends AbstractCollectionPlus {}
@@ -106,7 +106,7 @@ array (
 However, if you try to do this with a class implementing ``` \ArrayAccess ```, you'll see the following message:
 
 ```php
-$class = new \DCarbone\CollectionPlus\CollectionPlus(
+$class = new \DCarbone\AbstractCollectionPlus\AbstractCollectionPlus(
     array(
         'sub-array' => array('value1'),
     )
@@ -115,7 +115,7 @@ $class = new \DCarbone\CollectionPlus\CollectionPlus(
 $class['sub-array'][] = 'value2';
 
 // Produces E_NOTICE:
-// Notice: Indirect modification of overloaded element of DCarbone\CollectionPlus\CollectionPlus has no effect
+// Notice: Indirect modification of overloaded element of DCarbone\AbstractCollectionPlus\AbstractCollectionPlus has no effect
 ```
 
 There are a few ways around this.
