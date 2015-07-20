@@ -23,8 +23,8 @@
 
 ### Big Changes
 - Moving all "Fixed" collection classes to their own repository [here](https://github.com/dcarbone/fixed-collection-plus).
-- Shifting root namespace from "DCarbone\AbstractCollectionPlus" to just "DCarbone"
-- Renaming "BaseCollectionPlus" to just "AbstractCollectionPlus"
+- Shifting root namespace from "DCarbone\CollectionPlus" to just "DCarbone"
+- Renaming "BaseCollectionPlus" to just "CollectionPlus"
 - Renaming "ICollectionPlus" to "CollectionPlusInterface"
 
 ### Minor Changes
