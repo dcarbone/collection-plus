@@ -126,7 +126,7 @@ $current = $class['sub-array'];
 $current[] = 'value2';
 $class['sub-array'] = $current;
 
-var_export($class->__toArray());
+var_export($class->getArrayCopy());
 
 /* Produces:
 array (
@@ -143,7 +143,7 @@ For my money, however, I prefer to do this:
 ```php
 $class->{'sub-array'}[] = 'value2';
 
-var_export($class->__toArray());
+var_export($class->getArrayCopy());
 
 /* Produces:
 array (
