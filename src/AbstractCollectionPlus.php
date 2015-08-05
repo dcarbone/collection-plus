@@ -277,7 +277,7 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
         trigger_error(vsprintf(
             '%s::offsetGet - Requested offset "%s" does not exist in this collection.',
             array(get_class($this), $offset)
-        ), E_NOTICE);
+        ), E_USER_NOTICE);
 
         return null;
     }
