@@ -106,7 +106,7 @@ array (
 However, if you try to do this with a class implementing ``` \ArrayAccess ```, you'll see the following message:
 
 ```php
-$class = new \DCarbone\AbstractCollectionPlus\AbstractCollectionPlus(
+$class = new \DCarbone\CollectionPlus(
     array(
         'sub-array' => array('value1'),
     )
@@ -115,7 +115,7 @@ $class = new \DCarbone\AbstractCollectionPlus\AbstractCollectionPlus(
 $class['sub-array'][] = 'value2';
 
 // Produces E_NOTICE:
-// Notice: Indirect modification of overloaded element of DCarbone\AbstractCollectionPlus\AbstractCollectionPlus has no effect
+// Notice: Indirect modification of overloaded element of \DCarbone\CollectionPlus has no effect
 ```
 
 There are a few ways around this.
@@ -126,7 +126,7 @@ $current = $class['sub-array'];
 $current[] = 'value2';
 $class['sub-array'] = $current;
 
-var_export($class->__toArray());
+var_export($class->getArrayCopy());
 
 /* Produces:
 array (
@@ -143,7 +143,7 @@ For my money, however, I prefer to do this:
 ```php
 $class->{'sub-array'}[] = 'value2';
 
-var_export($class->__toArray());
+var_export($class->getArrayCopy());
 
 /* Produces:
 array (
@@ -169,7 +169,7 @@ Note that this will only work if all child objects also implement the <a href="h
 
 #### PHP 5.3.x USERS!
 
-I have added a custom JsonSerializable interface to maintain backward compatibility, but you must call this:
+I have added a [custom JsonSerializable](src/JsonSerializable.php) interface to maintain backward compatibility, but you must call this:
 
 ```php
 $json = json_encode($parent->jsonSerialize());
