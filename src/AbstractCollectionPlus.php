@@ -18,7 +18,7 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
     private $_firstKey;
 
     /** @var string */
-    protected $iteratorClass = '\ArrayIterator';
+    protected $iteratorClass = '\\ArrayIterator';
 
     /**
      * @param array $data
@@ -454,24 +454,10 @@ abstract class AbstractCollectionPlus implements CollectionPlusInterface
         if (!is_callable($func, false, $callable_name))
             throw new \InvalidArgumentException(get_class($this).'::exists - Un-callable "$func" value seen!');
 
-        // If this is a method on an object (except for \Closure), parse and continue
-        if (strpos($callable_name, '::') !== false && strpos($callable_name, 'Closure') === false)
+        foreach($this->_storage as $key => $value)
         {
-            $exp = explode('::', $callable_name);
-            foreach($this->_storage as $key=>$value)
-            {
-                if ($exp[0]::$exp[1]($key, $value))
-                    return true;
-            }
-        }
-        // Else execute as normal
-        else
-        {
-            foreach($this->_storage as $key=>$value)
-            {
-                if ($func($key, $value))
-                    return true;
-            }
+            if (call_user_func($func, $key, $value))
+                return true;
         }
 
         return false;

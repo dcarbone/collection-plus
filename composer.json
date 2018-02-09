@@ -1,36 +1,29 @@
 {
-    "name" : "dcarbone/collection-plus",
-    "type" : "library",
-    "description" : "A powerful Collection class inspired by the PHP community",
-
-    "keywords": [
-        "php",
-        "Collection",
-        "collection",
-        "ArrayObject",
-        "arrayobject"
-    ],
-    "homepage": "https://github.com/dcarbone/collection-plus",
-    "license": "GPLv3",
-
-    "authors" : [
-        {
-            "name" : "Daniel Carbone",
-            "email" : "daniel.p.carbone@gmail.com"
-        }
-    ],
-
-    "require" : {
-        "php" : ">=5.3.3"
-    },
-
-    "require-dev" : {
-        "phpunit/phpunit": "~4.1 <5.0.0"
-    },
-
-    "autoload" : {
-        "psr-4" : {
-            "DCarbone\\" : "src/"
-        }
+  "name": "dcarbone/collection-plus",
+  "type": "library",
+  "description": "A powerful Collection class inspired by the PHP community",
+  "keywords": [
+    "php",
+    "collection",
+    "arrayobject"
+  ],
+  "homepage": "https://github.com/dcarbone/collection-plus",
+  "license": "MPL-2.0",
+  "authors": [
+    {
+      "name": "Daniel Carbone",
+      "email": "daniel.p.carbone@gmail.com"
     }
+  ],
+  "require": {
+    "php": ">=5.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "@stable"
+  },
+  "autoload": {
+    "psr-4": {
+      "DCarbone\\": "src/"
+    }
+  }
 }

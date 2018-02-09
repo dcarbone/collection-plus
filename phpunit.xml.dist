@@ -1,16 +1,12 @@
 <?xml version="1.0"?>
 <phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/5.7/phpunit.xsd"
         bootstrap="./vendor/autoload.php"
         colors="true"
-        convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
         verbose="true"
-        stopOnFailure="false"
-        processIsolation="false"
         backupGlobals="false"
-        syntaxCheck="true"
-        >
+>
 
     <testsuite name="CollectionPlus">
         <directory>./tests/CollectionPlus</directory>

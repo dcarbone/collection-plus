@@ -8,26 +8,13 @@ require_once __DIR__.'/../misc/classes.php';
 /**
  * Class CollectionPlusTest
  */
-class CollectionPlusTest extends \PHPUnit_Framework_TestCase
-{
-    /** @var bool */
-    protected $gt540;
-
-    /**
-     * Determine if we're in a PHP env greater than 5.4.0
-     */
-    protected function setUp()
-    {
-        $this->gt540 = version_compare(PHP_VERSION, '5.4.0', 'ge') === -1;
-    }
-
+class CollectionPlusTest extends \PHPUnit\Framework\TestCase {
     //<editor-fold desc="ConstructorTests">
     /**
      * @covers \DCarbone\AbstractCollectionPlus::__construct
      * @return \DCarbone\AbstractCollectionPlus
      */
-    public function testCanConstructObjectWithNoArguments()
-    {
+    public function testCanConstructObjectWithNoArguments() {
         $collection = new \DCarbone\CollectionPlus();
         $this->assertInstanceOf('\\DCarbone\\AbstractCollectionPlus', $collection);
 
@@ -38,15 +25,14 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @covers \DCarbone\AbstractCollectionPlus::__construct
      * @return \DCarbone\AbstractCollectionPlus
      */
-    public function testCanConstructObjectWithArrayParameter()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testCanConstructObjectWithArrayParameter() {
+        $collection = new \DCarbone\CollectionPlus([
             'value0',
             'value1',
             'key2' => 'value2',
-            4 => 'value3',
-            '3' => 4,
-        ));
+            4      => 'value3',
+            '3'    => 4,
+        ]);
         $this->assertInstanceOf('\\DCarbone\\AbstractCollectionPlus', $collection);
 
         return $collection;
@@ -58,8 +44,7 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsArrayAccess(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testObjectImplementsArrayAccess(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertInstanceOf('\\ArrayAccess', $collection);
     }
 
@@ -67,8 +52,7 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsSeekableIterator(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testObjectImplementsSeekableIterator(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertInstanceOf('\\SeekableIterator', $collection);
     }
 
@@ -76,8 +60,7 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsCountable(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testObjectImplementsCountable(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertInstanceOf('\\Countable', $collection);
     }
 
@@ -85,65 +68,58 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsFirstLastValueKeyMethods(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'firstValue'), false), 'firstValue method not callable');
-        $this->assertTrue(is_callable(array($collection, 'lastValue'), false), 'lastValue method not callable');
-        $this->assertTrue(is_callable(array($collection, 'firstKey'), false), 'firstKey method not callable');
-        $this->assertTrue(is_callable(array($collection, 'lastKey'), false), 'lastKey method not callable');
+    public function testObjectImplementsFirstLastValueKeyMethods(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'firstValue'], false), 'firstValue method not callable');
+        $this->assertTrue(is_callable([$collection, 'lastValue'], false), 'lastValue method not callable');
+        $this->assertTrue(is_callable([$collection, 'firstKey'], false), 'firstKey method not callable');
+        $this->assertTrue(is_callable([$collection, 'lastKey'], false), 'lastKey method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsIsEmptyMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'isEmpty')), 'isEmpty method not callable');
+    public function testObjectImplementsIsEmptyMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'isEmpty']), 'isEmpty method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsEndMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'end'), false), 'end method not callable');
+    public function testObjectImplementsEndMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'end'], false), 'end method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsKeysMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'keys'), false), 'keys method not callable');
+    public function testObjectImplementsKeysMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'keys'], false), 'keys method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsValuesMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'values'), false), 'values method not callable');
+    public function testObjectImplementsValuesMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'values'], false), 'values method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsSearchMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'search'), false), 'search method not callable');
+    public function testObjectImplementsSearchMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'search'], false), 'search method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsSerializable(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testObjectImplementsSerializable(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertInstanceOf('\\Serializable', $collection);
     }
 
@@ -151,125 +127,111 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsJsonSerializable(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        if ($this->gt540)
-            $this->assertInstanceOf('\\JsonSerializable', $collection);
-        else
-            $this->assertInstanceOf('\\DCarbone\\JsonSerializable', $collection);
+    public function testObjectImplementsJsonSerializable(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertInstanceOf('\\JsonSerializable', $collection);
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsSetMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'set'), false), 'set method not callable');
+    public function testObjectImplementsSetMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'set'], false), 'set method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsAppendMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'append'), false), 'append method not callable');
+    public function testObjectImplementsAppendMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'append'], false), 'append method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementContainsMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'contains'), false), 'contains method not callable');
+    public function testObjectImplementContainsMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'contains'], false), 'contains method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsRemoveMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'remove'), false), 'remove method not callable');
+    public function testObjectImplementsRemoveMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'remove'], false), 'remove method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsRemoveElementMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'removeElement'), false), 'removeElement method not callable');
+    public function testObjectImplementsRemoveElementMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'removeElement'], false), 'removeElement method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsExistsMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'exists'), false), 'exists method is not callable');
+    public function testObjectImplementsExistsMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'exists'], false), 'exists method is not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collectionPlus
      */
-    public function testObjectImplementsFilterMethod(\DCarbone\AbstractCollectionPlus $collectionPlus)
-    {
-        $this->assertTrue(is_callable(array($collectionPlus, 'filter'), false), 'filter method is not callable');
+    public function testObjectImplementsFilterMethod(\DCarbone\AbstractCollectionPlus $collectionPlus) {
+        $this->assertTrue(is_callable([$collectionPlus, 'filter'], false), 'filter method is not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testCanSetAndGetCustomIteratorClass(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'setIteratorClass'), false), 'setIteratorClass method not callable');
-        $this->assertTrue(is_callable(array($collection, 'getIteratorClass'), false), 'getIteratorClass method not callable');
+    public function testCanSetAndGetCustomIteratorClass(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'setIteratorClass'], false),
+            'setIteratorClass method not callable');
+        $this->assertTrue(is_callable([$collection, 'getIteratorClass'], false),
+            'getIteratorClass method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsGetIteratorMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $this->assertTrue(is_callable(array($collection, 'getIterator'), false), 'getIterator method not callable');
+    public function testObjectImplementsGetIteratorMethod(\DCarbone\AbstractCollectionPlus $collection) {
+        $this->assertTrue(is_callable([$collection, 'getIterator'], false), 'getIterator method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collectionPlus
      */
-    public function testObjectImplementsMapMethod(\DCarbone\AbstractCollectionPlus $collectionPlus)
-    {
-        $this->assertTrue(is_callable(array($collectionPlus, 'map'), false), 'map method not callable');
+    public function testObjectImplementsMapMethod(\DCarbone\AbstractCollectionPlus $collectionPlus) {
+        $this->assertTrue(is_callable([$collectionPlus, 'map'], false), 'map method not callable');
     }
 
     /**
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testObjectImplementsRecursiveIterator(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testObjectImplementsRecursiveIterator(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertInstanceOf('\\RecursiveIterator', $collection);
     }
     //</editor-fold>
 
     //<editor-fold desc="ArrayAccessTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::offsetExists
-     * @covers \DCarbone\AbstractCollectionPlus::offsetGet
-     * @covers \DCarbone\AbstractCollectionPlus::offsetSet
-     * @covers \DCarbone\AbstractCollectionPlus::offsetUnset
+     * @covers  \DCarbone\AbstractCollectionPlus::offsetExists
+     * @covers  \DCarbone\AbstractCollectionPlus::offsetGet
+     * @covers  \DCarbone\AbstractCollectionPlus::offsetSet
+     * @covers  \DCarbone\AbstractCollectionPlus::offsetUnset
      * @depends testObjectImplementsArrayAccess
      */
-    public function testBasicArrayAccessImplementation()
-    {
+    public function testBasicArrayAccessImplementation() {
         $collection = new \DCarbone\CollectionPlus();
 
         $this->assertFalse(isset($collection['key1']));
@@ -292,11 +254,10 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="CountableTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::count
+     * @covers  \DCarbone\AbstractCollectionPlus::count
      * @depends testObjectImplementsCountable
      */
-    public function testCountableImplementation()
-    {
+    public function testCountableImplementation() {
         $collection = new \DCarbone\CollectionPlus();
 
         $this->assertCount(0, $collection);
@@ -307,16 +268,15 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="SeekableIteratorTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::current
-     * @covers \DCarbone\AbstractCollectionPlus::next
-     * @covers \DCarbone\AbstractCollectionPlus::key
-     * @covers \DCarbone\AbstractCollectionPlus::valid
-     * @covers \DCarbone\AbstractCollectionPlus::rewind
-     * @covers \DCarbone\AbstractCollectionPlus::seek
+     * @covers  \DCarbone\AbstractCollectionPlus::current
+     * @covers  \DCarbone\AbstractCollectionPlus::next
+     * @covers  \DCarbone\AbstractCollectionPlus::key
+     * @covers  \DCarbone\AbstractCollectionPlus::valid
+     * @covers  \DCarbone\AbstractCollectionPlus::rewind
+     * @covers  \DCarbone\AbstractCollectionPlus::seek
      * @depends testObjectImplementsSeekableIterator
      */
-    public function testSeekableIteratorImplementation()
-    {
+    public function testSeekableIteratorImplementation() {
         $collection = new \DCarbone\CollectionPlus();
 
         $this->assertFalse($collection->valid());
@@ -356,21 +316,19 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="IsEmptyMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::isEmpty
+     * @covers  \DCarbone\AbstractCollectionPlus::isEmpty
      * @depends testObjectImplementsIsEmptyMethod
      */
-    public function testIsEmptyMethodOnPopulatedObject()
-    {
-        $collection = new \DCarbone\CollectionPlus(array('value'));
+    public function testIsEmptyMethodOnPopulatedObject() {
+        $collection = new \DCarbone\CollectionPlus(['value']);
         $this->assertFalse($collection->isEmpty());
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::isEmpty
+     * @covers  \DCarbone\AbstractCollectionPlus::isEmpty
      * @depends testObjectImplementsIsEmptyMethod
      */
-    public function testIsEmptyMethodOnEmptyObject()
-    {
+    public function testIsEmptyMethodOnEmptyObject() {
         $collection = new \DCarbone\CollectionPlus();
         $this->assertTrue($collection->isEmpty());
     }
@@ -378,19 +336,18 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="FirstLastValueMethodsTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::firstValue
-     * @covers \DCarbone\AbstractCollectionPlus::lastValue
-     * @covers \DCarbone\AbstractCollectionPlus::_updateFirstLastKeys
+     * @covers  \DCarbone\AbstractCollectionPlus::firstValue
+     * @covers  \DCarbone\AbstractCollectionPlus::lastValue
+     * @covers  \DCarbone\AbstractCollectionPlus::_updateFirstLastKeys
      * @depends testObjectImplementsIsEmptyMethod
      * @depends testObjectImplementsFirstLastValueKeyMethods
      */
-    public function testFirstLastValueMethodsOnPopulatedObject()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testFirstLastValueMethodsOnPopulatedObject() {
+        $collection = new \DCarbone\CollectionPlus([
             'first',
             'middle',
-            7 => 'last'
-        ));
+            7 => 'last',
+        ]);
 
         $first = $collection->firstValue();
         $this->assertEquals('first', $first);
@@ -399,14 +356,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::firstValue
-     * @covers \DCarbone\AbstractCollectionPlus::lastValue
-     * @covers \DCarbone\AbstractCollectionPlus::_updateFirstLastKeys
+     * @covers  \DCarbone\AbstractCollectionPlus::firstValue
+     * @covers  \DCarbone\AbstractCollectionPlus::lastValue
+     * @covers  \DCarbone\AbstractCollectionPlus::_updateFirstLastKeys
      * @depends testObjectImplementsIsEmptyMethod
      * @depends testObjectImplementsFirstLastValueKeyMethods
      */
-    public function testFirstLastValueMethodsOnEmptyObject()
-    {
+    public function testFirstLastValueMethodsOnEmptyObject() {
         $collection = new \DCarbone\CollectionPlus();
 
         $first = $collection->firstValue();
@@ -418,19 +374,18 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="FirstLastKeyMethodsTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::firstKey
-     * @covers \DCarbone\AbstractCollectionPlus::lastKey
-     * @covers \DCarbone\AbstractCollectionPlus::_updateFirstLastKeys
+     * @covers  \DCarbone\AbstractCollectionPlus::firstKey
+     * @covers  \DCarbone\AbstractCollectionPlus::lastKey
+     * @covers  \DCarbone\AbstractCollectionPlus::_updateFirstLastKeys
      * @depends testObjectImplementsIsEmptyMethod
      * @depends testObjectImplementsFirstLastValueKeyMethods
      */
-    public function testFirstLastKeyMethodsOnPopulatedObject()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testFirstLastKeyMethodsOnPopulatedObject() {
+        $collection = new \DCarbone\CollectionPlus([
             'first',
             'middle',
             7 => 'last',
-        ));
+        ]);
 
         $first = $collection->firstKey();
         $this->assertEquals(0, $first);
@@ -439,14 +394,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::firstKey
-     * @covers \DCarbone\AbstractCollectionPlus::lastKey
-     * @covers \DCarbone\AbstractCollectionPlus::_updateFirstLastKeys
+     * @covers  \DCarbone\AbstractCollectionPlus::firstKey
+     * @covers  \DCarbone\AbstractCollectionPlus::lastKey
+     * @covers  \DCarbone\AbstractCollectionPlus::_updateFirstLastKeys
      * @depends testObjectImplementsIsEmptyMethod
      * @depends testObjectImplementsFirstLastValueKeyMethods
      */
-    public function testFirstLastKeyMethodsOnEmptyObject()
-    {
+    public function testFirstLastKeyMethodsOnEmptyObject() {
         $collection = new \DCarbone\CollectionPlus();
 
         $first = $collection->firstKey();
@@ -458,30 +412,28 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="endMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::end
+     * @covers  \DCarbone\AbstractCollectionPlus::end
      * @depends testCanConstructObjectWithNoArguments
      * @depends testObjectImplementsEndMethod
      * @depends testSeekableIteratorImplementation
      * @depends testFirstLastKeyMethodsOnEmptyObject
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testEndMethodOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testEndMethodOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertFalse($collection->valid());
         $collection->end();
         $this->assertFalse($collection->valid());
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::end
+     * @covers  \DCarbone\AbstractCollectionPlus::end
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testObjectImplementsEndMethod
      * @depends testSeekableIteratorImplementation
      * @depends testFirstLastKeyMethodsOnPopulatedObject
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testEndMethodOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testEndMethodOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertTrue($collection->valid());
         $this->assertEquals('value0', $collection->current());
         $this->assertEquals(0, $collection->key());
@@ -500,8 +452,7 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @depends testObjectImplementsKeysMethod
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testKeysMethodOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testKeysMethodOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection) {
         $keys = $collection->keys();
         $this->assertInternalType('array', $keys);
         $this->assertCount(5, $keys);
@@ -510,13 +461,12 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::keys
+     * @covers  \DCarbone\AbstractCollectionPlus::keys
      * @depends testCanConstructObjectWithNoArguments
      * @depends testObjectImplementsKeysMethod
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testKeysMethodOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testKeysMethodOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection) {
         $keys = $collection->keys();
         $this->assertInternalType('array', $keys);
         $this->assertCount(0, $keys);
@@ -525,12 +475,11 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="valuesMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::values
+     * @covers  \DCarbone\AbstractCollectionPlus::values
      * @depends testCanConstructObjectWithArrayParameter
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testValuesMethodOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testValuesMethodOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection) {
         $values = $collection->values();
         $this->assertInternalType('array', $values);
         $this->assertCount(5, $values);
@@ -539,13 +488,12 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::values
+     * @covers  \DCarbone\AbstractCollectionPlus::values
      * @depends testCanConstructObjectWithNoArguments
      * @depends testObjectImplementsValuesMethod
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testValuesMethodOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testValuesMethodOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection) {
         $values = $collection->values();
         $this->assertInternalType('array', $values);
         $this->assertCount(0, $values);
@@ -554,59 +502,54 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="searchMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::search
+     * @covers  \DCarbone\AbstractCollectionPlus::search
      * @depends testCanConstructObjectWithNoArguments
      * @depends testObjectImplementsSearchMethod
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testLooseSearchOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testLooseSearchOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertFalse($collection->search('sandwiches'));
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::search
+     * @covers  \DCarbone\AbstractCollectionPlus::search
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testObjectImplementsSearchMethod
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testLooseSearchOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testLooseSearchOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertEquals('3', $collection->search('4'));
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::search
+     * @covers  \DCarbone\AbstractCollectionPlus::search
      * @depends testCanConstructObjectWithNoArguments
      * @depends testObjectImplementsSearchMethod
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testStrictSearchOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testStrictSearchOnEmptyObject(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertFalse($collection->search('4', true));
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::search
+     * @covers  \DCarbone\AbstractCollectionPlus::search
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testObjectImplementsSearchMethod
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testStrictSearchOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testStrictSearchOnPopulatedObject(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertFalse($collection->search('4', true));
     }
     //</editor-fold>
 
     //<editor-fold desc="__get__setMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::__set
+     * @covers  \DCarbone\AbstractCollectionPlus::__set
      * @depends testCanConstructObjectWithNoArguments
      * @depends testBasicArrayAccessImplementation
      * @return \DCarbone\AbstractCollectionPlus
      */
-    public function test__SetMethod()
-    {
+    public function test__SetMethod() {
         $collection = new \DCarbone\CollectionPlus();
 
         $collection->key0 = 'value0';
@@ -633,8 +576,7 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @param \DCarbone\AbstractCollectionPlus $collection
      * @return \DCarbone\AbstractCollectionPlus
      */
-    public function test__GetMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function test__GetMethod(\DCarbone\AbstractCollectionPlus $collection) {
         $this->assertEquals('value0', $collection->key0);
         $this->assertEquals('OtherValue', $collection->OtherKey);
         $this->assertEquals('value with space', $collection->{'key with space'});
@@ -644,44 +586,41 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::__get
+     * @covers  \DCarbone\AbstractCollectionPlus::__get
      * @depends test__GetMethod
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testModifyingValuesWith__GetMethod(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testModifyingValuesWith__GetMethod(\DCarbone\AbstractCollectionPlus $collection) {
         $collection->key0 = new \stdClass();
         $this->assertInternalType('object', $collection->key0);
 
         $collection->key0->key1 = 'value1';
         $this->assertEquals('value1', $collection->key0->key1);
 
-        $collection->key0 = array('value0');
+        $collection->key0 = ['value0'];
         $collection->key0[] = 'value1';
         $this->assertEquals('value1', end($collection->key0));
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::__get
+     * @covers  \DCarbone\AbstractCollectionPlus::__get
      * @depends testCanConstructObjectWithArrayParameter
      * @depends test__GetMethod
      * @expectedException \OutOfBoundsException
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testExceptionThrownWhenGettingInvalidProperty(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testExceptionThrownWhenGettingInvalidProperty(\DCarbone\AbstractCollectionPlus $collection) {
         $collection->sandwiches;
     }
     //</editor-fold>
 
     //<editor-fold desc="getArrayCopyMethodTest">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::getArrayCopy
+     * @covers  \DCarbone\AbstractCollectionPlus::getArrayCopy
      * @depends testCanConstructObjectWithArrayParameter
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testGetArrayCopy(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testGetArrayCopy(\DCarbone\AbstractCollectionPlus $collection) {
         $copy = $collection->getArrayCopy();
         $this->assertInternalType('array', $copy);
         $this->assertSameSize($collection, $copy);
@@ -690,14 +629,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="SerializationMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::serialize
+     * @covers  \DCarbone\AbstractCollectionPlus::serialize
      * @depends testCanConstructObjectWithNoArguments
      * @depends testObjectImplementsSerializable
      * @param \DCarbone\AbstractCollectionPlus $collection
      * @return string
      */
-    public function testCanSerializeEmptyObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testCanSerializeEmptyObject(\DCarbone\AbstractCollectionPlus $collection) {
         $serialized = serialize($collection);
         $this->assertInternalType('string', $serialized);
         $this->assertEquals('C:23:"DCarbone\CollectionPlus":6:{a:0:{}}', $serialized);
@@ -705,14 +643,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::serialize
+     * @covers  \DCarbone\AbstractCollectionPlus::serialize
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testObjectImplementsSerializable
      * @param \DCarbone\AbstractCollectionPlus $collection
      * @return string
      */
-    public function testCanSerializePopulatedObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testCanSerializePopulatedObject(\DCarbone\AbstractCollectionPlus $collection) {
         $serialized = serialize($collection);
         $this->assertInternalType('string', $serialized);
         $this->assertEquals(
@@ -722,27 +659,25 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::unserialize
+     * @covers  \DCarbone\AbstractCollectionPlus::unserialize
      * @depends testCanSerializeEmptyObject
      * @depends testCountableImplementation
      * @param string $serialized
      */
-    public function testCanUnserializeEmptyObject($serialized)
-    {
+    public function testCanUnserializeEmptyObject($serialized) {
         $collection = unserialize($serialized);
         $this->assertInstanceOf('\\DCarbone\\AbstractCollectionPlus', $collection);
         $this->assertCount(0, $collection);
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::unserialize
+     * @covers  \DCarbone\AbstractCollectionPlus::unserialize
      * @depends testCanSerializePopulatedObject
      * @depends testCountableImplementation
      * @depends testBasicArrayAccessImplementation
      * @param string $serialized
      */
-    public function testCanUnserializePopulatedObject($serialized)
-    {
+    public function testCanUnserializePopulatedObject($serialized) {
         $collection = unserialize($serialized);
         $this->assertInstanceOf('\\DCarbone\\AbstractCollectionPlus', $collection);
         $this->assertCount(5, $collection);
@@ -753,33 +688,27 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="jsonSerializeTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::jsonSerialize
+     * @covers  \DCarbone\AbstractCollectionPlus::jsonSerialize
      * @depends testCanConstructObjectWithNoArguments
      * @param \DCarbone\AbstractCollectionPlus $collection
      * @return string
      */
-    public function testCanJsonEncodeEmptyObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        if ($this->gt540)
-            $json = json_encode($collection);
-        else
-            $json = json_encode($collection->jsonSerialize());
+    public function testCanJsonEncodeEmptyObject(\DCarbone\AbstractCollectionPlus $collection) {
+        $json = json_encode($collection);
+        $this->assertInternalType('string', $json);
 
         return $json;
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::jsonSerialize
+     * @covers  \DCarbone\AbstractCollectionPlus::jsonSerialize
      * @depends testCanConstructObjectWithArrayParameter
      * @param \DCarbone\AbstractCollectionPlus $collection
      * @return string
      */
-    public function testCanJsonEncodePopulatedObject(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        if ($this->gt540)
-            $json = json_encode($collection);
-        else
-            $json = json_encode($collection->jsonSerialize());
+    public function testCanJsonEncodePopulatedObject(\DCarbone\AbstractCollectionPlus $collection) {
+        $json = json_encode($collection);
+        $this->assertInternalType('string', $json);
 
         return $json;
     }
@@ -788,8 +717,7 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @depends testCanJsonEncodeEmptyObject
      * @param string $json
      */
-    public function testCanCreateArrayFromEmptyCollectionJsonString($json)
-    {
+    public function testCanCreateArrayFromEmptyCollectionJsonString($json) {
         $array = json_decode($json, true);
         $this->assertInternalType('array', $array);
         $this->assertCount(0, $array);
@@ -799,8 +727,7 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @depends testCanJsonEncodePopulatedObject
      * @param string $json
      */
-    public function testCanCreateArrayFromPopulatedCollectionJsonString($json)
-    {
+    public function testCanCreateArrayFromPopulatedCollectionJsonString($json) {
         $array = json_decode($json, true);
         $this->assertInternalType('array', $array);
         $this->assertCount(5, $array);
@@ -809,12 +736,11 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="toStringMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::__toString
+     * @covers  \DCarbone\AbstractCollectionPlus::__toString
      * @depends testCanConstructObjectWithArrayParameter
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testCollectionCanBeTypecastAsString(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testCollectionCanBeTypecastAsString(\DCarbone\AbstractCollectionPlus $collection) {
         $string = (string)$collection;
         $this->assertTrue(is_string($string));
     }
@@ -822,20 +748,19 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="exchangeArrayMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @covers  \DCarbone\AbstractCollectionPlus::exchangeArray
      * @depends testCanConstructObjectWithArrayParameter
      */
-    public function testCanUseExchangeArrayWithArrayParameter()
-    {
-        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
+    public function testCanUseExchangeArrayWithArrayParameter() {
+        $collection = new \DCarbone\CollectionPlus(['test' => 'value']);
 
         $this->assertTrue(
             method_exists($collection, 'exchangeArray'),
             '"$collection" object did not contain public method "exchangeArray"');
 
-        $newArray = array(
-            'new-key' => 'new-value'
-        );
+        $newArray = [
+            'new-key' => 'new-value',
+        ];
 
         $oldArray = $collection->exchangeArray($newArray);
         $this->assertTrue(
@@ -848,20 +773,19 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @covers  \DCarbone\AbstractCollectionPlus::exchangeArray
      * @depends testCanConstructObjectWithArrayParameter
      */
-    public function testCanUseExchangeArrayWithStdClassParameter()
-    {
-        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
+    public function testCanUseExchangeArrayWithStdClassParameter() {
+        $collection = new \DCarbone\CollectionPlus(['test' => 'value']);
 
         $this->assertTrue(
             method_exists($collection, 'exchangeArray'),
             '"$collection" object did not contain public method "exchangeArray"');
 
-        $newObject = (object) array(
-            'new-key' => 'new-value'
-        );
+        $newObject = (object)[
+            'new-key' => 'new-value',
+        ];
 
         $oldArray = $collection->exchangeArray($newObject);
         $this->assertTrue(
@@ -874,18 +798,17 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @covers  \DCarbone\AbstractCollectionPlus::exchangeArray
      * @depends testCanConstructObjectWithArrayParameter
      */
-    public function testCanUseExchangeArrayWithSelfParameter()
-    {
-        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
+    public function testCanUseExchangeArrayWithSelfParameter() {
+        $collection = new \DCarbone\CollectionPlus(['test' => 'value']);
 
         $this->assertTrue(
             method_exists($collection, 'exchangeArray'),
             '"$collection" object did not contain public method "exchangeArray"');
 
-        $newSelf = new \DCarbone\CollectionPlus(array('new-key' => 'new-value'));
+        $newSelf = new \DCarbone\CollectionPlus(['new-key' => 'new-value']);
 
         $oldArray = $collection->exchangeArray($newSelf);
         $this->assertTrue(
@@ -898,19 +821,18 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @covers  \DCarbone\AbstractCollectionPlus::exchangeArray
      * @depends testCanConstructObjectWithArrayParameter
-     * @uses \ArrayObject
+     * @uses    \ArrayObject
      */
-    public function testCanUseExchangeArrayWithArrayObjectParameter()
-    {
-        $collection = new \DCarbone\CollectionPlus(array('test' => 'value'));
+    public function testCanUseExchangeArrayWithArrayObjectParameter() {
+        $collection = new \DCarbone\CollectionPlus(['test' => 'value']);
 
         $this->assertTrue(
             method_exists($collection, 'exchangeArray'),
             '"$collection" object did not contain public method "exchangeArray"');
 
-        $newArrayObject = new ArrayObject(array('new-key' => 'new-value'));
+        $newArrayObject = new ArrayObject(['new-key' => 'new-value']);
 
         $oldArray = $collection->exchangeArray($newArrayObject);
         $this->assertTrue(
@@ -923,12 +845,11 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @covers  \DCarbone\AbstractCollectionPlus::exchangeArray
      * @depends testCanConstructObjectWithNoArguments
-     * @uses \SplFixedArray
+     * @uses    \SplFixedArray
      */
-    public function testCanUseExchangeArrayWithSplFixedArray()
-    {
+    public function testCanUseExchangeArrayWithSplFixedArray() {
         $collection = new \DCarbone\CollectionPlus();
         $fixedArray = new \SplFixedArray(1);
         $fixedArray[0] = 'test';
@@ -939,24 +860,22 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @covers  \DCarbone\AbstractCollectionPlus::exchangeArray
      * @depends testCanConstructObjectWithNoArguments
      * @expectedException \InvalidArgumentException
      */
-    public function testExceptionIsRaisedWhenNonArrayOrObjectPassedToExchangeArray()
-    {
+    public function testExceptionIsRaisedWhenNonArrayOrObjectPassedToExchangeArray() {
         $collection = new \DCarbone\CollectionPlus();
         $newData = 42;
         $collection->exchangeArray($newData);
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exchangeArray
+     * @covers  \DCarbone\AbstractCollectionPlus::exchangeArray
      * @depends testCanConstructObjectWithNoArguments
      * @expectedException \InvalidArgumentException
      */
-    public function testExceptionThrownWhenInvalidObjectPassedToExchangeArray()
-    {
+    public function testExceptionThrownWhenInvalidObjectPassedToExchangeArray() {
         $collection = new \DCarbone\CollectionPlus();
         $class = new im_just_a_class();
         $collection->exchangeArray($class);
@@ -965,12 +884,11 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="SetAppendMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::set
+     * @covers  \DCarbone\AbstractCollectionPlus::set
      * @depends testObjectImplementsSetMethod
      * @depends testBasicArrayAccessImplementation
      */
-    public function testSetMethodImplementation()
-    {
+    public function testSetMethodImplementation() {
         $collection = new \DCarbone\CollectionPlus();
         $collection->set('key1', 'value1');
         $this->assertArrayHasKey('key1', $collection);
@@ -978,12 +896,11 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::append
+     * @covers  \DCarbone\AbstractCollectionPlus::append
      * @depends testObjectImplementsAppendMethod
      * @depends testBasicArrayAccessImplementation
      */
-    public function testAppendMethodImplementation()
-    {
+    public function testAppendMethodImplementation() {
         $collection = new \DCarbone\CollectionPlus();
         $collection->append('value1');
         $this->assertArrayHasKey(0, $collection);
@@ -993,20 +910,19 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="containsMethodImplementation">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::contains
+     * @covers  \DCarbone\AbstractCollectionPlus::contains
      * @depends testObjectImplementContainsMethod
      * @depends testCanConstructObjectWithArrayParameter
      */
-    public function testContainsWithScalarType()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testContainsWithScalarType() {
+        $collection = new \DCarbone\CollectionPlus([
             0,
             1,
             '1',
             null,
             true,
             false,
-        ));
+        ]);
 
         $this->assertTrue($collection->contains(1));
         $this->assertTrue($collection->contains('1'));
@@ -1018,30 +934,28 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::contains
+     * @covers  \DCarbone\AbstractCollectionPlus::contains
      * @depends testObjectImplementContainsMethod
      * @depends testCanConstructObjectWithArrayParameter
      */
-    public function testContainsWithObjects()
-    {
+    public function testContainsWithObjects() {
         $obj1 = new \stdClass();
-        $collection = new \DCarbone\CollectionPlus(array($obj1));
+        $collection = new \DCarbone\CollectionPlus([$obj1]);
         $this->assertTrue($collection->contains($obj1));
     }
     //</editor-fold>
 
     //<editor-fold desc="removeMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::remove
+     * @covers  \DCarbone\AbstractCollectionPlus::remove
      * @depends testObjectImplementsRemoveMethod
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testBasicArrayAccessImplementation
      * @depends testCountableImplementation
      */
-    public function testCanRemoveElementFromCollectionByIndex()
-    {
+    public function testCanRemoveElementFromCollectionByIndex() {
         $collection = new \DCarbone\CollectionPlus(
-            array('key1' => 'value1')
+            ['key1' => 'value1']
         );
 
         $removed = $collection->remove('key1');
@@ -1051,15 +965,14 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::remove
+     * @covers  \DCarbone\AbstractCollectionPlus::remove
      * @depends testObjectImplementsRemoveMethod
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testBasicArrayAccessImplementation
      * @depends testCountableImplementation
      */
-    public function testCanRemoveNullValueFromCollectionByIndex()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(null));
+    public function testCanRemoveNullValueFromCollectionByIndex() {
+        $collection = new \DCarbone\CollectionPlus([null]);
         $this->assertCount(1, $collection);
         $this->assertContains(null, $collection);
 
@@ -1069,15 +982,14 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::remove
+     * @covers  \DCarbone\AbstractCollectionPlus::remove
      * @depends testObjectImplementsRemoveMethod
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testBasicArrayAccessImplementation
      * @depends testCountableImplementation
      */
-    public function testNullReturnedWhenRemovingInvalidIndex()
-    {
-        $collection = new \DCarbone\CollectionPlus(array('value'));
+    public function testNullReturnedWhenRemovingInvalidIndex() {
+        $collection = new \DCarbone\CollectionPlus(['value']);
         $this->assertCount(1, $collection);
         $value = $collection->remove(1);
         $this->assertNull($value);
@@ -1086,16 +998,15 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="removeElementTestMethods">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::removeElement
+     * @covers  \DCarbone\AbstractCollectionPlus::removeElement
      * @depends testObjectImplementsRemoveElementMethod
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testBasicArrayAccessImplementation
      * @depends testCountableImplementation
      */
-    public function testCanRemoveScalarElementFromCollection()
-    {
-        $element = array('value1');
-        $collection = new \DCarbone\CollectionPlus(array('key1' => $element));
+    public function testCanRemoveScalarElementFromCollection() {
+        $element = ['value1'];
+        $collection = new \DCarbone\CollectionPlus(['key1' => $element]);
         $this->assertCount(1, $collection);
 
         $removed = $collection->removeElement($element);
@@ -1104,17 +1015,16 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::removeElement
+     * @covers  \DCarbone\AbstractCollectionPlus::removeElement
      * @depends testObjectImplementsRemoveElementMethod
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testBasicArrayAccessImplementation
      * @depends testCountableImplementation
      */
-    public function testCanRemoveObjectElementFromCollection()
-    {
+    public function testCanRemoveObjectElementFromCollection() {
         $element = new \stdClass();
         $element->key = 'value';
-        $collection = new \DCarbone\CollectionPlus(array($element));
+        $collection = new \DCarbone\CollectionPlus([$element]);
         $this->assertCount(1, $collection);
 
         $removed = $collection->removeElement($element);
@@ -1123,25 +1033,23 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::removeElement
+     * @covers  \DCarbone\AbstractCollectionPlus::removeElement
      * @depends testObjectImplementsRemoveElementMethod
      * @depends testCanConstructObjectWithArrayParameter
      */
-    public function testGetFalseWhenRemoveElementCalledWithValueNotInCollection()
-    {
-        $collection = new \DCarbone\CollectionPlus(array('element1'));
+    public function testGetFalseWhenRemoveElementCalledWithValueNotInCollection() {
+        $collection = new \DCarbone\CollectionPlus(['element1']);
         $this->assertFalse($collection->removeElement('element2'));
     }
     //</editor-fold>
 
     //<editor-fold desc="existsMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exists
+     * @covers  \DCarbone\AbstractCollectionPlus::exists
      * @depends testCanConstructObjectWithArrayParameter
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testExistsWithStringGlobalFunctionName(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testExistsWithStringGlobalFunctionName(\DCarbone\AbstractCollectionPlus $collection) {
         $shouldExist = $collection->exists('_collection_exists_success_test');
         $shouldNotExist = $collection->exists('_collection_exists_failure_test');
 
@@ -1150,27 +1058,25 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exists
-     * @uses \CollectionPlusTests
+     * @covers  \DCarbone\AbstractCollectionPlus::exists
+     * @uses    \CollectionPlusTests
      * @depends testCanConstructObjectWithArrayParameter
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testExistsWithStringObjectStaticMethodName(\DCarbone\AbstractCollectionPlus $collection)
-    {
-        $shouldExist = $collection->exists(array('\\CollectionPlusTests', '_collection_exists_success_test'));
-        $shouldNotExist = $collection->exists(array('\\CollectionPlusTests', '_collection_exists_failure_test'));
+    public function testExistsWithStringObjectStaticMethodName(\DCarbone\AbstractCollectionPlus $collection) {
+        $shouldExist = $collection->exists(['\\CollectionPlusTests', '_collection_exists_success_test']);
+        $shouldNotExist = $collection->exists(['\\CollectionPlusTests', '_collection_exists_failure_test']);
 
         $this->assertTrue($shouldExist);
         $this->assertNotTrue($shouldNotExist);
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::exists
+     * @covers  \DCarbone\AbstractCollectionPlus::exists
      * @depends testCanConstructObjectWithArrayParameter
      * @param \DCarbone\AbstractCollectionPlus $collection
      */
-    public function testExistsWithAnonymousFunction(\DCarbone\AbstractCollectionPlus $collection)
-    {
+    public function testExistsWithAnonymousFunction(\DCarbone\AbstractCollectionPlus $collection) {
         $shouldExist = $collection->exists(function($key, $value) {
             return ($key === 3 && $value === 4);
         });
@@ -1186,36 +1092,33 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="SetGetIteratorMethodsTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::setIteratorClass
-     * @covers \DCarbone\AbstractCollectionPlus::getIteratorClass
+     * @covers  \DCarbone\AbstractCollectionPlus::setIteratorClass
+     * @covers  \DCarbone\AbstractCollectionPlus::getIteratorClass
      * @depends testCanSetAndGetCustomIteratorClass
      */
-    public function testCanSetValidIteratorClassWithLeadingSlashes()
-    {
+    public function testCanSetValidIteratorClassWithLeadingSlashes() {
         $collection = new \DCarbone\CollectionPlus();
         $collection->setIteratorClass('\\ArrayIterator');
         $this->assertEquals('\\ArrayIterator', $collection->getIteratorClass());
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::setIteratorClass
-     * @covers \DCarbone\AbstractCollectionPlus::getIteratorClass
+     * @covers  \DCarbone\AbstractCollectionPlus::setIteratorClass
+     * @covers  \DCarbone\AbstractCollectionPlus::getIteratorClass
      * @depends testCanSetAndGetCustomIteratorClass
      */
-    public function testCanSetValidIteratorClassWithoutLeadingSlashes()
-    {
+    public function testCanSetValidIteratorClassWithoutLeadingSlashes() {
         $collection = new \DCarbone\CollectionPlus();
         $collection->setIteratorClass('ArrayIterator');
         $this->assertEquals('\\ArrayIterator', $collection->getIteratorClass());
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::setIteratorClass
+     * @covers  \DCarbone\AbstractCollectionPlus::setIteratorClass
      * @depends testCanSetAndGetCustomIteratorClass
      * @expectedException \InvalidArgumentException
      */
-    public function testExceptionThrownWhenUndefinedIteratorClassSet()
-    {
+    public function testExceptionThrownWhenUndefinedIteratorClassSet() {
         $collection = new \DCarbone\CollectionPlus();
         $collection->setIteratorClass('\\MyAwesomeIterator');
     }
@@ -1223,15 +1126,14 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="getIteratorMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::getIterator
+     * @covers  \DCarbone\AbstractCollectionPlus::getIterator
      * @depends testObjectImplementsGetIteratorMethod
      * @depends testCanConstructObjectWithArrayParameter
-     * @uses \ArrayIterator
+     * @uses    \ArrayIterator
      */
-    public function testCanGetDefaultIteratorClass()
-    {
+    public function testCanGetDefaultIteratorClass() {
         $collection = new \DCarbone\CollectionPlus(
-            array('key1' => 'value1', 'key2' => 'value2')
+            ['key1' => 'value1', 'key2' => 'value2']
         );
 
         $arrayIterator = $collection->getIterator();
@@ -1239,16 +1141,15 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::getIterator
+     * @covers  \DCarbone\AbstractCollectionPlus::getIterator
      * @depends testObjectImplementsGetIteratorMethod
      * @depends testCanConstructObjectWithArrayParameter
      * @depends testCanSetValidIteratorClassWithLeadingSlashes
-     * @uses \MySuperAwesomeIteratorClass
+     * @uses    \MySuperAwesomeIteratorClass
      */
-    public function testCanGetCustomIteratorClass()
-    {
+    public function testCanGetCustomIteratorClass() {
         $collection = new \DCarbone\CollectionPlus(
-            array('key1' => 'value1', 'key2' => 'value2')
+            ['key1' => 'value1', 'key2' => 'value2']
         );
 
         $collection->setIteratorClass('\\MySuperAwesomeIteratorClass');
@@ -1259,25 +1160,24 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     //<editor-fold desc="mapMethodTests">
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @covers  \DCarbone\AbstractCollectionPlus::map
      * @depends testObjectImplementsMapMethod
      * @expectedException \InvalidArgumentException
      */
-    public function testMapThrowsExceptionWhenUncallableFuncPassed()
-    {
+    public function testMapThrowsExceptionWhenUncallableFuncPassed() {
         $collection = new \DCarbone\CollectionPlus();
         $collection->map('this_function_doesnt_exist');
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @covers  \DCarbone\AbstractCollectionPlus::map
      * @depends testObjectImplementsMapMethod
      */
-    public function testMapWithGlobalFunction()
-    {
+    public function testMapWithGlobalFunction() {
         $collection = new \DCarbone\CollectionPlus();
-        for($i = 0; $i < 10; $i++)
+        for ($i = 0; $i < 10; $i++) {
             $collection[] = $i;
+        }
 
         $this->assertEquals(10, count($collection));
 
@@ -1289,19 +1189,19 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @covers  \DCarbone\AbstractCollectionPlus::map
      * @depends testObjectImplementsMapMethod
-     * @uses \CollectionPlusTests
+     * @uses    \CollectionPlusTests
      */
-    public function testMapWithObjectStaticMethod()
-    {
+    public function testMapWithObjectStaticMethod() {
         $collection = new \DCarbone\CollectionPlus();
-        for($i = 0; $i < 10; $i++)
+        for ($i = 0; $i < 10; $i++) {
             $collection[] = $i;
+        }
 
         $this->assertEquals(10, count($collection));
 
-        $mapped = $collection->map(array('CollectionPlusTests', '_collection_map_change_odd_values_to_null'));
+        $mapped = $collection->map(['CollectionPlusTests', '_collection_map_change_odd_values_to_null']);
         $this->assertEquals(10, count($mapped));
 
         $this->assertNull($mapped[1]);
@@ -1309,18 +1209,19 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @covers  \DCarbone\AbstractCollectionPlus::map
      * @depends testObjectImplementsMapMethod
      */
-    public function testMapWithAnonymousFunction()
-    {
+    public function testMapWithAnonymousFunction() {
         $collection = new \DCarbone\CollectionPlus();
-        for($i = 0; $i < 10; $i++)
+        for ($i = 0; $i < 10; $i++) {
             $collection[] = $i;
+        }
 
-        $mapped = $collection->map(function ($value) {
-            if ($value % 2 === 0)
+        $mapped = $collection->map(function($value) {
+            if ($value % 2 === 0) {
                 return $value;
+            }
 
             return null;
         });
@@ -1330,19 +1231,20 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::map
+     * @covers  \DCarbone\AbstractCollectionPlus::map
      * @depends testObjectImplementsMapMethod
-     * @uses \MySuperAwesomeCollectionClass
+     * @uses    \MySuperAwesomeCollectionClass
      */
-    public function testMapWithAnonymousFunctionReturnsInstanceOfExtendedClass()
-    {
+    public function testMapWithAnonymousFunctionReturnsInstanceOfExtendedClass() {
         $collection = new MySuperAwesomeCollectionClass();
-        for($i = 0; $i < 10; $i++)
+        for ($i = 0; $i < 10; $i++) {
             $collection[] = $i;
+        }
 
-        $mapped = $collection->map(function ($value) {
-            if ($value % 2 === 0)
+        $mapped = $collection->map(function($value) {
+            if ($value % 2 === 0) {
                 return $value;
+            }
 
             return null;
         });
@@ -1357,15 +1259,14 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::filter
      */
-    public function testFilterWithNoCallableParameter()
-    {
+    public function testFilterWithNoCallableParameter() {
         $collection = new \DCarbone\CollectionPlus();
-        for($i = 1; $i <= 10; $i++)
-        {
-            if ($i % 2 === 0)
+        for ($i = 1; $i <= 10; $i++) {
+            if ($i % 2 === 0) {
                 $collection[] = true;
-            else
+            } else {
                 $collection[] = false;
+            }
         }
 
         $this->assertEquals(10, count($collection));
@@ -1378,15 +1279,14 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::filter
      */
-    public function testFilterWithGlobalFunction()
-    {
+    public function testFilterWithGlobalFunction() {
         $collection = new \DCarbone\CollectionPlus();
-        for($i = 1; $i <= 10; $i++)
-        {
-            if ($i % 2 === 0)
+        for ($i = 1; $i <= 10; $i++) {
+            if ($i % 2 === 0) {
                 $collection[] = true;
-            else
+            } else {
                 $collection[] = false;
+            }
         }
 
         $this->assertEquals(10, count($collection));
@@ -1398,22 +1298,21 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \DCarbone\AbstractCollectionPlus::filter
-     * @uses \CollectionPlusTests
+     * @uses   \CollectionPlusTests
      */
-    public function testFilterWithObjectStaticFunction()
-    {
+    public function testFilterWithObjectStaticFunction() {
         $collection = new \DCarbone\CollectionPlus();
-        for($i = 1; $i <= 10; $i++)
-        {
-            if ($i % 2 === 0)
+        for ($i = 1; $i <= 10; $i++) {
+            if ($i % 2 === 0) {
                 $collection[] = true;
-            else
+            } else {
                 $collection[] = false;
+            }
         }
 
         $this->assertEquals(10, count($collection));
 
-        $filtered = $collection->filter(array('CollectionPlusTests', '_collection_filter_remove_true_values'));
+        $filtered = $collection->filter(['CollectionPlusTests', '_collection_filter_remove_true_values']);
         $this->assertEquals(5, count($filtered));
         $this->assertNotContains(true, $filtered);
     }
@@ -1421,20 +1320,19 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::filter
      */
-    public function testFilterWithAnonymousFunction()
-    {
+    public function testFilterWithAnonymousFunction() {
         $collection = new \DCarbone\CollectionPlus();
-        for($i = 1; $i <= 10; $i++)
-        {
-            if ($i % 2 === 0)
+        for ($i = 1; $i <= 10; $i++) {
+            if ($i % 2 === 0) {
                 $collection[] = true;
-            else
+            } else {
                 $collection[] = false;
+            }
         }
 
         $this->assertEquals(10, count($collection));
 
-        $filtered = $collection->filter(function ($value) {
+        $filtered = $collection->filter(function($value) {
             return ($value === false);
         });
 
@@ -1445,20 +1343,19 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::filter
      */
-    public function testFilterWithAnonymousFunctionReturnsInstanceOfExtendedClass()
-    {
+    public function testFilterWithAnonymousFunctionReturnsInstanceOfExtendedClass() {
         $collection = new MySuperAwesomeCollectionClass();
-        for($i = 1; $i <= 10; $i++)
-        {
-            if ($i % 2 === 0)
+        for ($i = 1; $i <= 10; $i++) {
+            if ($i % 2 === 0) {
                 $collection[] = true;
-            else
+            } else {
                 $collection[] = false;
+            }
         }
 
         $this->assertEquals(10, count($collection));
 
-        $filtered = $collection->filter(function ($value) {
+        $filtered = $collection->filter(function($value) {
             return ($value === false);
         });
 
@@ -1471,9 +1368,8 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
      * @covers \DCarbone\AbstractCollectionPlus::filter
      * @expectedException \InvalidArgumentException
      */
-    public function testExceptionThrownWhenUnCallableFunctionPassedToFilter()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(false, null, true));
+    public function testExceptionThrownWhenUnCallableFunctionPassedToFilter() {
+        $collection = new \DCarbone\CollectionPlus([false, null, true]);
         $collection->filter('haha, i\'m not a function!');
     }
     //</editor-fold>
@@ -1482,11 +1378,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::sort
      */
-    public function testSort()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
-            'z', 'q', 'a', 'b',
-        ));
+    public function testSort() {
+        $collection = new \DCarbone\CollectionPlus([
+            'z',
+            'q',
+            'a',
+            'b',
+        ]);
 
         $collection->sort();
         $this->assertEquals(
@@ -1503,11 +1401,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::rsort
      */
-    public function testRSort()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
-            'z', 'q', 'a', 'b',
-        ));
+    public function testRSort() {
+        $collection = new \DCarbone\CollectionPlus([
+            'z',
+            'q',
+            'a',
+            'b',
+        ]);
 
         $collection->rsort();
         $this->assertEquals(
@@ -1524,11 +1424,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::usort
      */
-    public function testUSortWithAnonymousFunction()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
-            'z', 'q', 'a', 'b',
-        ));
+    public function testUSortWithAnonymousFunction() {
+        $collection = new \DCarbone\CollectionPlus([
+            'z',
+            'q',
+            'a',
+            'b',
+        ]);
 
         $collection->usort(function($a, $b) {
             return ($a > $b ? 1 : -1);
@@ -1547,14 +1449,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::ksort
      */
-    public function testKSort()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testKSort() {
+        $collection = new \DCarbone\CollectionPlus([
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
             'b' => 'b',
-        ));
+        ]);
 
         $collection->ksort();
         $this->assertEquals(
@@ -1571,14 +1472,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::krsort
      */
-    public function testKRSort()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testKRSort() {
+        $collection = new \DCarbone\CollectionPlus([
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
             'b' => 'b',
-        ));
+        ]);
 
         $collection->krsort();
         $this->assertEquals(
@@ -1595,14 +1495,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::uksort
      */
-    public function testUKSort()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testUKSort() {
+        $collection = new \DCarbone\CollectionPlus([
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
             'b' => 'b',
-        ));
+        ]);
 
         $collection->uksort(function($a, $b) {
             return ($a > $b ? 1 : -1);
@@ -1621,14 +1520,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::asort
      */
-    public function testASort()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testASort() {
+        $collection = new \DCarbone\CollectionPlus([
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
             'b' => 'b',
-        ));
+        ]);
 
         $collection->asort();
 
@@ -1654,14 +1552,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::arsort
      */
-    public function testARSort()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testARSort() {
+        $collection = new \DCarbone\CollectionPlus([
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
             'b' => 'b',
-        ));
+        ]);
 
         $collection->arsort();
 
@@ -1687,14 +1584,13 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \DCarbone\AbstractCollectionPlus::uasort
      */
-    public function testUASort()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
+    public function testUASort() {
+        $collection = new \DCarbone\CollectionPlus([
             'z' => 'z',
             'q' => 'q',
             'a' => 'a',
             'b' => 'b',
-        ));
+        ]);
 
         $collection->uasort(function($a, $b) {
             return ($a > $b ? 1 : -1);
@@ -1721,18 +1617,17 @@ class CollectionPlusTest extends \PHPUnit_Framework_TestCase
     //</editor-fold>
 
     /**
-     * @covers \DCarbone\AbstractCollectionPlus::hasChildren
-     * @covers \DCarbone\AbstractCollectionPlus::getChildren
+     * @covers  \DCarbone\AbstractCollectionPlus::hasChildren
+     * @covers  \DCarbone\AbstractCollectionPlus::getChildren
      * @depends testObjectImplementsRecursiveIterator
      * @depends testCanConstructObjectWithArrayParameter
      */
-    public function testRecursiveIteratorImplementation()
-    {
-        $collection = new \DCarbone\CollectionPlus(array(
-            'key1' => array('value1'),
+    public function testRecursiveIteratorImplementation() {
+        $collection = new \DCarbone\CollectionPlus([
+            'key1' => ['value1'],
             'key2' => 'value2',
-            'key3' => array('value3'),
-        ));
+            'key3' => ['value3'],
+        ]);
 
         $this->assertTrue(
             $collection->hasChildren(),
